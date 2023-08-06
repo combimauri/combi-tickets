@@ -6,11 +6,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { map, shareReplay } from 'rxjs/operators';
+import { Router, RouterLink } from '@angular/router';
+import { Subject } from 'rxjs';
+import { map, shareReplay, switchMap, tap } from 'rxjs/operators';
+
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'combi-layout',
   template: `
+    <ng-container *ngIf="signOut$ | async"></ng-container>
+
     <mat-sidenav-container class="sidenav-container">
       <mat-sidenav
         #drawer
@@ -23,9 +29,9 @@ import { map, shareReplay } from 'rxjs/operators';
         <mat-toolbar>Menu</mat-toolbar>
 
         <mat-nav-list>
-          <a mat-list-item href="#">Link 1</a>
-          <a mat-list-item href="#">Link 2</a>
-          <a mat-list-item href="#">Link 3</a>
+          <a mat-list-item routerLink="/records">Records</a>
+          <a mat-list-item routerLink="/scanner">Scanner</a>
+          <a mat-list-item (click)="signOut()">Sign Out</a>
         </mat-nav-list>
       </mat-sidenav>
 
@@ -44,7 +50,7 @@ import { map, shareReplay } from 'rxjs/operators';
           <span>Combi Tickets</span>
         </mat-toolbar>
 
-        <div class="container">
+        <div class="content-container">
           <ng-content></ng-content>
         </div>
       </mat-sidenav-content>
@@ -58,10 +64,10 @@ import { map, shareReplay } from 'rxjs/operators';
 
       .sidenav {
         width: 200px;
-      }
 
-      .sidenav .mat-toolbar {
-        background: inherit;
+        .mat-toolbar {
+          background: inherit;
+        }
       }
 
       .mat-toolbar.mat-primary {
@@ -70,7 +76,7 @@ import { map, shareReplay } from 'rxjs/operators';
         z-index: 1;
       }
 
-      .container {
+      .content-container {
         padding: 15px;
       }
     `,
@@ -84,13 +90,30 @@ import { map, shareReplay } from 'rxjs/operators';
     MatListModule,
     MatIconModule,
     NgIf,
+    RouterLink,
   ],
 })
 export class LayoutComponent {
   private breakpointObserver = inject(BreakpointObserver);
-
   isHandset$ = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
     map((result) => result.matches),
     shareReplay(),
   );
+
+  private auth = inject(AuthService);
+  private signOutSubject$ = new Subject<void>();
+  signOut$ = this.signOutSubject$.asObservable().pipe(
+    switchMap(() => this.auth.signOut()),
+    tap(() => this.handleSignOutResponse()),
+  );
+
+  private router = inject(Router);
+
+  signOut(): void {
+    this.signOutSubject$.next();
+  }
+
+  private handleSignOutResponse(): void {
+    this.router.navigate(['/login']);
+  }
 }

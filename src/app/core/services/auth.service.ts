@@ -11,16 +11,11 @@ import { Observable, catchError, from, of } from 'rxjs';
 
 import { LoggerService } from './logger.service';
 
-export type FirebaseErrorMessage = string;
-
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
   private logger = inject(LoggerService);
 
   private auth: Auth = inject(Auth);
-  authState$ = authState(this.auth);
   user$ = user(this.auth);
 
   signIn(
@@ -34,5 +29,9 @@ export class AuthService {
         return of(undefined);
       }),
     );
+  }
+
+  signOut(): Observable<void | undefined> {
+    return from(this.auth.signOut());
   }
 }

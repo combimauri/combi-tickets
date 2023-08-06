@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { Router } from '@angular/router';
 import { Subject, switchMap, tap } from 'rxjs';
 
 import { AuthService } from '../core/services/auth.service';
@@ -25,45 +26,61 @@ import { AuthService } from '../core/services/auth.service';
   template: `
     <ng-container *ngIf="signIn$ | async"></ng-container>
 
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title> Combi Tickets </mat-card-title>
-      </mat-card-header>
+    <div class="login-container">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title> Combi Tickets </mat-card-title>
+        </mat-card-header>
 
-      <mat-card-content>
-        <form [formGroup]="loginForm" (ngSubmit)="signIn()">
-          <mat-form-field>
-            <mat-label>Email</mat-label>
-            <input matInput formControlName="email" />
-          </mat-form-field>
+        <mat-card-content>
+          <form [formGroup]="loginForm" (ngSubmit)="signIn()">
+            <mat-form-field>
+              <mat-label>Email</mat-label>
+              <input matInput formControlName="email" />
+            </mat-form-field>
 
-          <mat-form-field>
-            <mat-label>Password</mat-label>
-            <input matInput formControlName="password" type="password" />
-          </mat-form-field>
+            <mat-form-field>
+              <mat-label>Password</mat-label>
+              <input matInput formControlName="password" type="password" />
+            </mat-form-field>
 
-          <div class="submit-container">
-            <button
-              mat-raised-button
-              type="submit"
-              [disabled]="loginForm.invalid"
-            >
-              Login
-            </button>
-          </div>
-        </form>
-      </mat-card-content>
-    </mat-card>
+            <div class="submit-container">
+              <button
+                mat-raised-button
+                type="submit"
+                [disabled]="loginForm.invalid"
+              >
+                Login
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </div>
   `,
   styles: [
     `
-      form {
+      .login-container {
+        align-items: center;
         display: flex;
-        flex-direction: column;
+        height: 100dvh;
+        justify-content: center;
+        min-height: 400px;
+        padding: 15px;
 
-        .submit-container {
-          display: flex;
-          justify-content: flex-end;
+        mat-card {
+          max-width: 100%;
+          width: 400px;
+
+          form {
+            display: flex;
+            flex-direction: column;
+
+            .submit-container {
+              display: flex;
+              justify-content: flex-end;
+            }
+          }
         }
       }
     `,
@@ -83,6 +100,8 @@ export class LoginComponent {
     tap((response) => this.handleSignInResponse(response)),
   );
 
+  private router = inject(Router);
+
   signIn(): void {
     if (this.loginForm.invalid) {
       return;
@@ -99,5 +118,7 @@ export class LoginComponent {
     if (!response) {
       return;
     }
+
+    this.router.navigate(['/']);
   }
 }
