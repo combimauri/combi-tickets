@@ -28,8 +28,9 @@ import { AuthService } from '../services/auth.service';
       >
         <mat-nav-list>
           <div>
-            <a mat-list-item routerLink="/records">Records</a>
-            <a mat-list-item routerLink="/scanner">Scanner</a>
+            <a mat-list-item routerLink="/scanner"> Scanner </a>
+            <a mat-list-item routerLink="/records"> Records </a>
+            <a mat-list-item routerLink="/credentials"> Credentials </a>
           </div>
 
           <a mat-list-item (click)="signOut()">

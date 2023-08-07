@@ -21,6 +21,13 @@ export const routes: Routes = [
           import('./record/record.routes').then((m) => m.recordRoutes),
       },
       {
+        path: 'credentials',
+        loadComponent: () =>
+          import('./credentials/credentials.component').then(
+            (m) => m.CredentialsComponent,
+          ),
+      },
+      {
         path: 'scanner',
         loadComponent: () =>
           import('./scanner/scanner.component').then((m) => m.ScannerComponent),

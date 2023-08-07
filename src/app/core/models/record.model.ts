@@ -5,7 +5,6 @@ enum RecordType {
 
 export interface Record {
   email: string;
-  id: string;
   name: string;
   phone: string;
   type: RecordType;
