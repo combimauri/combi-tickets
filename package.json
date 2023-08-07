@@ -8,8 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "prepare": "husky install",
-    "keys:create": "cat ./src/environments/keys.template.ts > ./src/environments/keys.ts",
-    "keys:inject": "echo $keys > ./src/environments/keys.ts"
+    "keys:create": "cat ./src/environments/keys.template.ts > ./src/environments/keys.ts"
   },
   "private": true,
   "dependencies": {
