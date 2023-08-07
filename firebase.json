@@ -1,1 +1,15 @@
-{}
+{
+  "hosting": [
+    {
+      "target": "combi-tickets",
+      "public": "dist/combi-tickets",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    }
+  ]
+}

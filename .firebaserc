@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "wgj-bolivia": {
+      "hosting": {
+        "combi-tickets": [
+          "wgjbo-tickets"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "wgj-bolivia"
+  }
+}
