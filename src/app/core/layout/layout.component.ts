@@ -26,12 +26,18 @@ import { AuthService } from '../services/auth.service';
         [mode]="(isHandset$ | async) ? 'over' : 'side'"
         [opened]="(isHandset$ | async) === false"
       >
-        <mat-toolbar>Menu</mat-toolbar>
-
         <mat-nav-list>
-          <a mat-list-item routerLink="/records">Records</a>
-          <a mat-list-item routerLink="/scanner">Scanner</a>
-          <a mat-list-item (click)="signOut()">Sign Out</a>
+          <div>
+            <a mat-list-item routerLink="/records">Records</a>
+            <a mat-list-item routerLink="/scanner">Scanner</a>
+          </div>
+
+          <a mat-list-item (click)="signOut()">
+            <div class="sign-out__btn-content">
+              Sign Out
+              <mat-icon aria-label="Sign out icon">logout</mat-icon>
+            </div>
+          </a>
         </mat-nav-list>
       </mat-sidenav>
 
@@ -74,6 +80,20 @@ import { AuthService } from '../services/auth.service';
         position: sticky;
         top: 0;
         z-index: 1;
+      }
+
+      .mat-mdc-nav-list {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: space-between;
+      }
+
+      .sign-out__btn-content {
+        align-items: center;
+        display: flex;
+        gap: 8px;
       }
 
       .content-container {
