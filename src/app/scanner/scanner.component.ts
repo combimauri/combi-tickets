@@ -29,7 +29,7 @@ export class ScannerComponent {
   private recordService = inject(RecordService);
   private recordSubject$ = new Subject<string>();
   record$ = this.recordSubject$.pipe(
-    switchMap((email) => this.recordService.getRecord(email)),
+    switchMap((email) => this.recordService.getRecordByEmail(email)),
     tap((record) => this.openScannerDialog(record)),
   );
 

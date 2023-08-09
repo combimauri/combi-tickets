@@ -28,5 +28,5 @@ import { CredentialComponent } from '../shared/credential/credential.component';
 })
 export class CredentialsComponent {
   private recordService = inject(RecordService);
-  records$ = this.recordService.getRecords();
+  records$ = this.recordService.getAllRecords();
 }

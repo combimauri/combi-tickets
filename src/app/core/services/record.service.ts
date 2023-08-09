@@ -7,8 +7,15 @@ import {
   collectionData,
   doc,
   docData,
+  endBefore,
+  getCountFromServer,
+  limit,
+  limitToLast,
+  orderBy,
+  query,
+  startAfter,
 } from '@angular/fire/firestore';
-import { Observable, catchError, of, tap } from 'rxjs';
+import { Observable, catchError, from, map, of, tap } from 'rxjs';
 
 import { LoggerService } from './logger.service';
 import { Record } from '../models/record.model';
@@ -17,16 +24,14 @@ import { LoadingState } from '../states/loading.state';
 @Injectable({ providedIn: 'root' })
 export class RecordService {
   private loadingState = inject(LoadingState);
-  private firestore = inject(Firestore);
-  private recordsCollection = collection(this.firestore, 'records');
-
+  private db = inject(Firestore);
   private logger = inject(LoggerService);
 
-  getRecords(): Observable<Record[]> {
+  getAllRecords(): Observable<Record[]> {
     this.loadingState.startLoading();
 
     return (
-      collectionData(this.recordsCollection) as Observable<Record[]>
+      collectionData(collection(this.db, 'records')) as Observable<Record[]>
     ).pipe(
       catchError((error) => {
         this.logger.handleError(error);
@@ -37,13 +42,65 @@ export class RecordService {
     );
   }
 
-  getRecord(email: string): Observable<Record | undefined> {
+  getRecordsCount(): Observable<number> {
+    return from(getCountFromServer(collection(this.db, 'records'))).pipe(
+      map((snapshot) => snapshot.data().count),
+    );
+  }
+
+  getFirstPageOfRecords(pageSize: number): Observable<Record[]> {
+    this.loadingState.startLoading();
+
+    return (
+      collectionData(
+        query(collection(this.db, 'records'), orderBy('name'), limit(pageSize)),
+      ) as Observable<Record[]>
+    ).pipe(tap(() => this.loadingState.stopLoading()));
+  }
+
+  getNextPageOfRecords(
+    lastVisibleRecord: Record,
+    pageSize: number,
+  ): Observable<Record[]> {
+    this.loadingState.startLoading();
+
+    return (
+      collectionData(
+        query(
+          collection(this.db, 'records'),
+          orderBy('name'),
+          startAfter(lastVisibleRecord.name),
+          limit(pageSize),
+        ),
+      ) as Observable<Record[]>
+    ).pipe(tap(() => this.loadingState.stopLoading()));
+  }
+
+  getPreviousPageOfRecords(
+    lastVisibleRecord: Record,
+    pageSize: number,
+  ): Observable<Record[]> {
+    this.loadingState.startLoading();
+
+    return (
+      collectionData(
+        query(
+          collection(this.db, 'records'),
+          orderBy('name'),
+          endBefore(lastVisibleRecord.name),
+          limitToLast(pageSize),
+        ),
+      ) as Observable<Record[]>
+    ).pipe(tap(() => this.loadingState.stopLoading()));
+  }
+
+  getRecordByEmail(email: string): Observable<Record | undefined> {
     this.loadingState.startLoading();
 
     let docRef: DocumentReference<DocumentData>;
 
     try {
-      docRef = doc(this.firestore, 'records', email);
+      docRef = doc(this.db, 'records', email);
     } catch (error) {
       this.loadingState.stopLoading();
 
