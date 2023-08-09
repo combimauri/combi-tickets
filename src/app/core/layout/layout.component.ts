@@ -42,7 +42,6 @@ import { LoadingState } from '../states/loading.state';
       >
         <mat-nav-list>
           <div>
-            <a mat-list-item routerLink="/scanner"> Scanner </a>
             <a mat-list-item routerLink="/records"> Records </a>
             <a mat-list-item routerLink="/credentials"> Credentials </a>
           </div>
@@ -59,20 +58,32 @@ import { LoadingState } from '../states/loading.state';
       <mat-sidenav-content>
         <mat-toolbar color="primary">
           <button
+            *ngIf="isHandset$ | async"
+            mat-icon-button
             type="button"
             aria-label="Toggle sidenav"
-            mat-icon-button
             (click)="drawer.toggle()"
-            *ngIf="isHandset$ | async"
           >
             <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
           </button>
 
-          <span> Combi Tickets </span>
+          <a mat-button class="nav-title" routerLink="/"> Combi Tickets </a>
 
           <div *ngIf="loading()" class="spinner-container">
             <mat-spinner class="title-spinner"></mat-spinner>
           </div>
+
+          <a
+            mat-icon-button
+            type="button"
+            aria-label="Access scanner"
+            class="scanner-button"
+            routerLink="/scanner"
+          >
+            <mat-icon aria-label="Side nav toggle icon"
+              >qr_code_scanner</mat-icon
+            >
+          </a>
         </mat-toolbar>
 
         <div class="content-container">
@@ -118,6 +129,14 @@ import { LoadingState } from '../states/loading.state';
           --mdc-circular-progress-active-indicator-color: #ffffff;
           max-height: 100%;
         }
+      }
+
+      .nav-title {
+        font-size: 1.25rem;
+      }
+
+      .scanner-button {
+        margin-left: auto;
       }
 
       .sign-out__btn-content {
