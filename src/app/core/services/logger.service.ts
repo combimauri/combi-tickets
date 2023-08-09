@@ -5,6 +5,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class LoggerService {
   private snackBar = inject(MatSnackBar);
 
+  handleSuccess(message: string): void {
+    this.snackBar.open(message, 'dismiss', { panelClass: 'info-snackbar' });
+  }
+
   handleError(message: string): void {
     this.snackBar.open(message, 'dismiss');
   }

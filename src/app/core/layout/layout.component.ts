@@ -6,14 +6,28 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router, RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
 import { map, shareReplay, switchMap, tap } from 'rxjs/operators';
 
 import { AuthService } from '../services/auth.service';
+import { LoadingState } from '../states/loading.state';
 
 @Component({
   selector: 'combi-layout',
+  standalone: true,
+  imports: [
+    AsyncPipe,
+    MatButtonModule,
+    MatIconModule,
+    MatListModule,
+    MatProgressSpinnerModule,
+    MatSidenavModule,
+    MatToolbarModule,
+    NgIf,
+    RouterLink,
+  ],
   template: `
     <ng-container *ngIf="signOut$ | async"></ng-container>
 
@@ -54,7 +68,11 @@ import { AuthService } from '../services/auth.service';
             <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
           </button>
 
-          <span>Combi Tickets</span>
+          <span> Combi Tickets </span>
+
+          <div *ngIf="loading()" class="spinner-container">
+            <mat-spinner class="title-spinner"></mat-spinner>
+          </div>
         </mat-toolbar>
 
         <div class="content-container">
@@ -91,6 +109,17 @@ import { AuthService } from '../services/auth.service';
         justify-content: space-between;
       }
 
+      .spinner-container {
+        box-sizing: border-box;
+        height: 100%;
+        padding: 16px 0;
+
+        .mat-mdc-progress-spinner.title-spinner {
+          --mdc-circular-progress-active-indicator-color: #ffffff;
+          max-height: 100%;
+        }
+      }
+
       .sign-out__btn-content {
         align-items: center;
         display: flex;
@@ -102,19 +131,10 @@ import { AuthService } from '../services/auth.service';
       }
     `,
   ],
-  standalone: true,
-  imports: [
-    AsyncPipe,
-    MatToolbarModule,
-    MatButtonModule,
-    MatSidenavModule,
-    MatListModule,
-    MatIconModule,
-    NgIf,
-    RouterLink,
-  ],
 })
 export class LayoutComponent {
+  loading = inject(LoadingState).loading;
+
   private breakpointObserver = inject(BreakpointObserver);
   isHandset$ = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
     map((result) => result.matches),
@@ -123,7 +143,7 @@ export class LayoutComponent {
 
   private auth = inject(AuthService);
   private signOutSubject$ = new Subject<void>();
-  signOut$ = this.signOutSubject$.asObservable().pipe(
+  signOut$ = this.signOutSubject$.pipe(
     switchMap(() => this.auth.signOut()),
     tap(() => this.handleSignOutResponse()),
   );

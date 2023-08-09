@@ -1,6 +1,5 @@
 import { AsyncPipe, NgIf } from '@angular/common';
 import { Component, effect, inject } from '@angular/core';
-import { UserCredential } from '@angular/fire/auth';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -10,11 +9,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router, RouterLink } from '@angular/router';
 import { Subject, switchMap, tap } from 'rxjs';
 
-import { AuthService } from '../core/services/auth.service';
-import { LoadingState } from '../core/states/loading.state';
+import { AuthService } from '../../core/services/auth.service';
+import { LoadingState } from '../../core/states/loading.state';
 
 @Component({
-  selector: 'combi-login',
+  selector: 'combi-reset-password',
   standalone: true,
   imports: [
     AsyncPipe,
@@ -28,9 +27,9 @@ import { LoadingState } from '../core/states/loading.state';
     RouterLink,
   ],
   template: `
-    <ng-container *ngIf="signIn$ | async"></ng-container>
+    <ng-container *ngIf="resetPassword$ | async"></ng-container>
 
-    <div class="login-container">
+    <div class="reset-password-container">
       <mat-card>
         <mat-card-header>
           <mat-card-title>
@@ -38,30 +37,25 @@ import { LoadingState } from '../core/states/loading.state';
             <mat-spinner *ngIf="loading()" class="title-spinner"></mat-spinner>
           </mat-card-title>
 
-          <mat-card-subtitle> Login </mat-card-subtitle>
+          <mat-card-subtitle> Reset Password </mat-card-subtitle>
         </mat-card-header>
 
         <mat-card-content>
-          <form [formGroup]="loginForm" (ngSubmit)="signIn()">
+          <form [formGroup]="resetPasswordForm" (ngSubmit)="resetPassword()">
             <mat-form-field>
               <mat-label>Email</mat-label>
               <input matInput formControlName="email" />
             </mat-form-field>
 
-            <mat-form-field>
-              <mat-label>Password</mat-label>
-              <input matInput formControlName="password" type="password" />
-            </mat-form-field>
-
             <div class="submit-container">
-              <a mat-button routerLink="reset-password"> Reset Password </a>
+              <a mat-button routerLink="/login"> Login </a>
 
               <button
                 mat-raised-button
                 type="submit"
-                [disabled]="loginForm.invalid || loading()"
+                [disabled]="resetPasswordForm.invalid || loading()"
               >
-                Login
+                Reset Password
               </button>
             </div>
           </form>
@@ -79,7 +73,7 @@ import { LoadingState } from '../core/states/loading.state';
         max-height: 30px;
       }
 
-      .login-container {
+      .reset-password-container {
         align-items: center;
         display: flex;
         height: 100dvh;
@@ -106,18 +100,17 @@ import { LoadingState } from '../core/states/loading.state';
     `,
   ],
 })
-export class LoginComponent {
+export class ResetPasswordComponent {
   loading = inject(LoadingState).loading;
-  loginForm = inject(FormBuilder).group({
+  resetPasswordForm = inject(FormBuilder).group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
   private auth = inject(AuthService);
-  private signInSubject$ = new Subject<{ email: string; password: string }>();
-  signIn$ = this.signInSubject$.pipe(
-    switchMap(({ email, password }) => this.auth.signIn(email, password)),
-    tap((response) => this.handleSignInResponse(response)),
+  private resetPasswordSubject$ = new Subject<string>();
+  resetPassword$ = this.resetPasswordSubject$.pipe(
+    switchMap((email) => this.auth.sendPasswordResetEmail(email)),
+    tap((response) => this.handleResetPasswordResponse(response)),
   );
 
   private router = inject(Router);
@@ -125,30 +118,30 @@ export class LoginComponent {
   constructor() {
     effect(() => {
       if (this.loading()) {
-        this.loginForm.disable();
+        this.resetPasswordForm.disable();
       } else {
-        this.loginForm.enable();
+        this.resetPasswordForm.enable();
       }
     });
   }
 
-  signIn(): void {
-    if (this.loginForm.invalid) {
+  resetPassword(): void {
+    if (this.resetPasswordForm.invalid) {
       return;
     }
 
-    const { email, password } = this.loginForm.value;
+    const { email } = this.resetPasswordForm.value;
 
-    if (email && password) {
-      this.signInSubject$.next({ email, password });
+    if (email) {
+      this.resetPasswordSubject$.next(email);
     }
   }
 
-  private handleSignInResponse(response: UserCredential | undefined): void {
+  private handleResetPasswordResponse(response: unknown): void {
     if (!response) {
       return;
     }
 
-    this.router.navigate(['/']);
+    this.router.navigate(['/login']);
   }
 }

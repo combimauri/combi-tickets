@@ -1,5 +1,6 @@
 import { AsyncPipe, NgIf } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { Subject, switchMap, tap } from 'rxjs';
@@ -7,7 +8,6 @@ import { Subject, switchMap, tap } from 'rxjs';
 import { ScannerDialogComponent } from './scanner-dialog/scanner-dialog.component';
 import { Record } from '../core/models/record.model';
 import { RecordService } from '../core/services/record.service';
-import { untilDestroyed } from '../core/utils/until-destroyed.util';
 
 @Component({
   selector: 'combi-scanner',
@@ -28,14 +28,14 @@ import { untilDestroyed } from '../core/utils/until-destroyed.util';
 export class ScannerComponent {
   private recordService = inject(RecordService);
   private recordSubject$ = new Subject<string>();
-  record$ = this.recordSubject$.asObservable().pipe(
+  record$ = this.recordSubject$.pipe(
     switchMap((email) => this.recordService.getRecord(email)),
     tap((record) => this.openScannerDialog(record)),
   );
 
   private scannedEmail = '';
   private dialog = inject(MatDialog);
-  private untilDestroyed = untilDestroyed();
+  private destroyRef = inject(DestroyRef);
 
   processCode(scannedEmail: string): void {
     if (!scannedEmail || this.scannedEmail) {
@@ -52,7 +52,7 @@ export class ScannerComponent {
 
     dialogRef
       .afterClosed()
-      .pipe(this.untilDestroyed)
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => (this.scannedEmail = ''));
   }
 }

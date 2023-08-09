@@ -37,7 +37,7 @@ export const routes: Routes = [
   {
     path: 'login',
     canActivate: [loginGuard],
-    loadComponent: () =>
-      import('./login/login.component').then((m) => m.LoginComponent),
+    loadChildren: () =>
+      import('./login/login.routes').then((m) => m.loginRoutes),
   },
 ];
