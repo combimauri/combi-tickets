@@ -56,7 +56,14 @@
               "src/styles.scss"
             ],
             "scripts": [],
-            "allowedCommonJsDependencies": ["qrcode"]
+            "allowedCommonJsDependencies": [
+              "qrcode",
+              "html2canvas",
+              "dompurify",
+              "rgbcolor",
+              "raf",
+              "core-js"
+            ]
           },
           "configurations": {
             "production": {

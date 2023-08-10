@@ -31,6 +31,10 @@ export class CredentialComponent {
     this.loadCredential(record);
   }
 
+  @ViewChild('credentialCanvas', { static: true }) credentialCanvas:
+    | ElementRef
+    | undefined;
+
   recordEmail = '';
 
   readonly HEIGHT = 636;
@@ -41,9 +45,6 @@ export class CredentialComponent {
   private readonly NAME_TOP = 190;
   private readonly NAME_LEFT = this.WIDTH / 2;
 
-  @ViewChild('credentialCanvas', { static: true }) private credentialCanvas:
-    | ElementRef
-    | undefined;
   @ViewChild('qrCode', { static: true }) private qrCode:
     | QRCodeComponent
     | undefined;
@@ -86,7 +87,7 @@ export class CredentialComponent {
       return;
     }
 
-    context.font = '32px Roboto';
+    context.font = '20px Roboto';
     context.textAlign = 'center';
 
     context.drawImage(templateImage, 0, 0);

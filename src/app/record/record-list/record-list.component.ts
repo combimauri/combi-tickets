@@ -24,7 +24,7 @@ import { SearchBoxComponent } from '../../shared/search-box/search-box.component
     TitleCasePipe,
   ],
   template: `
-    <div class="search-box__container">
+    <div class="header">
       <h1> Records </h1>
       <combi-search-box (search)="searchRecord($event)"></combi-search-box>
     </div>
@@ -71,13 +71,6 @@ import { SearchBoxComponent } from '../../shared/search-box/search-box.component
   `,
   styles: [
     `
-      .search-box__container {
-        align-items: center;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-      }
-
       .mat-column-details small {
         display: block;
       }

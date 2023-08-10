@@ -17,7 +17,16 @@ import {
   startAfter,
   where,
 } from '@angular/fire/firestore';
-import { Observable, catchError, from, map, of, switchMap, tap } from 'rxjs';
+import {
+  Observable,
+  catchError,
+  finalize,
+  from,
+  map,
+  of,
+  switchMap,
+  tap,
+} from 'rxjs';
 
 import { LoggerService } from './logger.service';
 import { Record, RecordListing } from '../models/record.model';
@@ -37,6 +46,7 @@ export class RecordService {
     ).pipe(
       catchError((error) => this.handleErrorGettingRecord(error)),
       tap(() => this.loadingState.stopLoading()),
+      finalize(() => this.loadingState.stopLoading()),
     );
   }
 
@@ -58,6 +68,7 @@ export class RecordService {
       ),
       catchError((error) => this.handleErrorGettingRecord(error)),
       tap(() => this.loadingState.stopLoading()),
+      finalize(() => this.loadingState.stopLoading()),
     );
   }
 
@@ -85,6 +96,7 @@ export class RecordService {
       ),
       catchError((error) => this.handleErrorGettingRecord(error)),
       tap(() => this.loadingState.stopLoading()),
+      finalize(() => this.loadingState.stopLoading()),
     );
   }
 
@@ -112,6 +124,7 @@ export class RecordService {
       ),
       catchError((error) => this.handleErrorGettingRecord(error)),
       tap(() => this.loadingState.stopLoading()),
+      finalize(() => this.loadingState.stopLoading()),
     );
   }
 
@@ -131,6 +144,7 @@ export class RecordService {
     return (docData(docRef) as Observable<Record>).pipe(
       catchError((error) => this.handleErrorGettingRecord(error)),
       tap(() => this.loadingState.stopLoading()),
+      finalize(() => this.loadingState.stopLoading()),
     );
   }
 
