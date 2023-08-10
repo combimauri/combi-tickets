@@ -109,7 +109,7 @@ import { LoadingState } from '../states/loading.state';
       .mat-toolbar.mat-primary {
         position: sticky;
         top: 0;
-        z-index: 1;
+        z-index: 2;
       }
 
       .mat-mdc-nav-list {

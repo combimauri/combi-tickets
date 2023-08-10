@@ -11,5 +11,6 @@ export class LoggerService {
 
   handleError(message: string): void {
     this.snackBar.open(message, 'dismiss');
+    console.error(message);
   }
 }

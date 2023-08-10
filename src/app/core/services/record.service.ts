@@ -43,9 +43,13 @@ export class RecordService {
     this.loadingState.startLoading();
 
     return (
-      collectionData(collection(this.db, 'records')) as Observable<
-        CombiRecord[]
-      >
+      collectionData(
+        query(
+          collection(this.db, 'records'),
+          orderBy('role'),
+          orderBy('searchTerm'),
+        ),
+      ) as Observable<CombiRecord[]>
     ).pipe(
       catchError((error) => this.handleErrorGettingRecord(error)),
       tap(() => this.loadingState.stopLoading()),
