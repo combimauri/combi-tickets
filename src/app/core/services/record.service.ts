@@ -30,7 +30,7 @@ import {
 } from 'rxjs';
 
 import { LoggerService } from './logger.service';
-import { Record, RecordListing } from '../models/record.model';
+import { CombiRecord, RecordListing } from '../models/record.model';
 import { LoadingState } from '../states/loading.state';
 
 @Injectable({ providedIn: 'root' })
@@ -39,11 +39,13 @@ export class RecordService {
   private db = inject(Firestore);
   private logger = inject(LoggerService);
 
-  getAllRecords(): Observable<Record[] | undefined> {
+  getAllRecords(): Observable<CombiRecord[] | undefined> {
     this.loadingState.startLoading();
 
     return (
-      collectionData(collection(this.db, 'records')) as Observable<Record[]>
+      collectionData(collection(this.db, 'records')) as Observable<
+        CombiRecord[]
+      >
     ).pipe(
       catchError((error) => this.handleErrorGettingRecord(error)),
       tap(() => this.loadingState.stopLoading()),
@@ -61,7 +63,7 @@ export class RecordService {
     dbQuery = this.addSearchTermToQuery(dbQuery, searchTerm);
     dbQuery = query(dbQuery, orderBy('searchTerm'), limit(pageSize));
 
-    return (collectionData(dbQuery) as Observable<Record[]>).pipe(
+    return (collectionData(dbQuery) as Observable<CombiRecord[]>).pipe(
       switchMap((items) =>
         this.getRecordsCount(searchTerm).pipe(
           map((total) => ({ items, total })),
@@ -74,7 +76,7 @@ export class RecordService {
   }
 
   getNextPageOfRecords(
-    lastVisibleRecord: Record,
+    lastVisibleRecord: CombiRecord,
     pageSize: number,
     searchTerm: string,
   ): Observable<RecordListing | undefined> {
@@ -89,7 +91,7 @@ export class RecordService {
       limit(pageSize),
     );
 
-    return (collectionData(dbQuery) as Observable<Record[]>).pipe(
+    return (collectionData(dbQuery) as Observable<CombiRecord[]>).pipe(
       switchMap((items) =>
         this.getRecordsCount(searchTerm).pipe(
           map((total) => ({ items, total })),
@@ -102,7 +104,7 @@ export class RecordService {
   }
 
   getPreviousPageOfRecords(
-    lastVisibleRecord: Record,
+    lastVisibleRecord: CombiRecord,
     pageSize: number,
     searchTerm: string,
   ): Observable<RecordListing | undefined> {
@@ -117,7 +119,7 @@ export class RecordService {
       limitToLast(pageSize),
     );
 
-    return (collectionData(dbQuery) as Observable<Record[]>).pipe(
+    return (collectionData(dbQuery) as Observable<CombiRecord[]>).pipe(
       switchMap((items) =>
         this.getRecordsCount(searchTerm).pipe(
           map((total) => ({ items, total })),
@@ -129,7 +131,7 @@ export class RecordService {
     );
   }
 
-  getRecordByEmail(email: string): Observable<Record | undefined> {
+  getRecordByEmail(email: string): Observable<CombiRecord | undefined> {
     this.loadingState.startLoading();
 
     let docRef: DocumentReference<DocumentData>;
@@ -142,7 +144,7 @@ export class RecordService {
       return this.handleErrorGettingRecord(error as string);
     }
 
-    return (docData(docRef) as Observable<Record>).pipe(
+    return (docData(docRef) as Observable<CombiRecord>).pipe(
       catchError((error) => this.handleErrorGettingRecord(error)),
       tap(() => this.loadingState.stopLoading()),
       finalize(() => this.loadingState.stopLoading()),
@@ -151,8 +153,8 @@ export class RecordService {
 
   updateRecord(
     email: string,
-    data: Partial<Record>,
-  ): Observable<Partial<Record> | undefined> {
+    data: Partial<CombiRecord>,
+  ): Observable<Partial<CombiRecord> | undefined> {
     this.loadingState.startLoading();
 
     let docRef: DocumentReference<DocumentData>;

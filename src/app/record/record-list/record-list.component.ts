@@ -9,7 +9,7 @@ import { Observable, Subject, map, switchMap } from 'rxjs';
 import { RecordDetailsComponent } from '../record-details/record-details.component';
 import { Position } from '../../core/models/position.model';
 import { PageRecords } from '../../core/models/page-records.model';
-import { Record, RecordListing } from '../../core/models/record.model';
+import { CombiRecord, RecordListing } from '../../core/models/record.model';
 import { RecordService } from '../../core/services/record.service';
 import { SearchBoxComponent } from '../../shared/search-box/search-box.component';
 
@@ -48,10 +48,10 @@ import { SearchBoxComponent } from '../../shared/search-box/search-box.component
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="type">
-        <th mat-header-cell *matHeaderCellDef> Type </th>
+      <ng-container matColumnDef="role">
+        <th mat-header-cell *matHeaderCellDef> Role </th>
         <td mat-cell *matCellDef="let element">
-          {{ element.type | titlecase }}
+          {{ element.role | titlecase }}
         </td>
       </ng-container>
 
@@ -101,7 +101,7 @@ export class RecordListComponent implements AfterViewInit {
 
   private searchTerm = '';
 
-  readonly COLUMNS = ['position', 'details', 'type'];
+  readonly COLUMNS = ['position', 'details', 'role'];
 
   private recordService = inject(RecordService);
   private recordsSubject$ = new Subject<PageRecords>();
@@ -116,7 +116,7 @@ export class RecordListComponent implements AfterViewInit {
     this.recordsSubject$.next({});
   }
 
-  openRecordDetails(data: Record): void {
+  openRecordDetails(data: CombiRecord): void {
     this.dialog.open(RecordDetailsComponent, { data });
   }
 
@@ -133,8 +133,8 @@ export class RecordListComponent implements AfterViewInit {
 
   handlePaginationChange(
     { pageIndex, pageSize, previousPageIndex }: PageEvent,
-    firstRecord: Record,
-    lastRecord: Record,
+    firstRecord: CombiRecord,
+    lastRecord: CombiRecord,
   ): void {
     const previousPageSize = this.pageSize;
     this.pageSize = pageSize;
@@ -153,7 +153,7 @@ export class RecordListComponent implements AfterViewInit {
   private loadRecords({
     firstRecord,
     lastRecord,
-  }: PageRecords): Observable<Record[]> {
+  }: PageRecords): Observable<CombiRecord[]> {
     if (lastRecord) {
       return this.recordService
         .getNextPageOfRecords(lastRecord, this.pageSize, this.searchTerm)
@@ -175,13 +175,15 @@ export class RecordListComponent implements AfterViewInit {
     return listing?.items ? [...listing.items] : [];
   }
 
-  private mapRecordsPosition(records: Record[]): (Record & Position)[] {
+  private mapRecordsPosition(
+    records: CombiRecord[],
+  ): (CombiRecord & Position)[] {
     return records.map(
       (record, index) =>
         ({
           ...record,
           position: this.pageIndex * this.pageSize + index + 1,
-        }) as Record & Position,
+        }) as CombiRecord & Position,
     );
   }
 }

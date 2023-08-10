@@ -7,7 +7,7 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 
-import { Record } from '../../core/models/record.model';
+import { CombiRecord } from '../../core/models/record.model';
 
 @Component({
   selector: 'combi-scanner-dialog',
@@ -28,7 +28,7 @@ import { Record } from '../../core/models/record.model';
   `,
 })
 export class ScannerDialogComponent {
-  record: Record = inject(MAT_DIALOG_DATA);
+  record: CombiRecord = inject(MAT_DIALOG_DATA);
 
   private dialogRef = inject(MatDialogRef<ScannerDialogComponent>);
 

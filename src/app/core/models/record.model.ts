@@ -1,18 +1,20 @@
-enum RecordType {
-  GENERAL = 'GENERAL',
-  KID = 'KID',
+export enum RecordRole {
+  PARTICIPANT = 'participant',
+  ORGANIZER = 'organizer',
+  MENTOR = 'mentor',
+  GUIDE = 'guide',
+  KID = 'kid',
 }
 
-export interface Record {
+export interface CombiRecord {
   email: string;
   name: string;
-  phone: string;
+  role: RecordRole;
   searchTerm: string;
-  type: RecordType;
   [key: string]: unknown;
 }
 
 export interface RecordListing {
-  items: Record[];
+  items: CombiRecord[];
   total: number;
 }

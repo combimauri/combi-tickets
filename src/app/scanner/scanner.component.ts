@@ -6,7 +6,7 @@ import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { Subject, switchMap, tap } from 'rxjs';
 
 import { ScannerDialogComponent } from './scanner-dialog/scanner-dialog.component';
-import { Record } from '../core/models/record.model';
+import { CombiRecord } from '../core/models/record.model';
 import { RecordService } from '../core/services/record.service';
 
 @Component({
@@ -47,7 +47,7 @@ export class ScannerComponent {
     this.recordSubject$.next(this.scannedEmail);
   }
 
-  private openScannerDialog(data: Record | undefined): void {
+  private openScannerDialog(data: CombiRecord | undefined): void {
     const dialogRef = this.dialog.open(ScannerDialogComponent, { data });
 
     dialogRef

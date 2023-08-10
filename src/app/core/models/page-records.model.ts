@@ -1,6 +1,6 @@
-import { Record } from './record.model';
+import { CombiRecord } from './record.model';
 
 export interface PageRecords {
-  firstRecord?: Record;
-  lastRecord?: Record;
+  firstRecord?: CombiRecord;
+  lastRecord?: CombiRecord;
 }

@@ -12,7 +12,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { QRCodeModule } from 'angularx-qrcode';
 import { Subject, switchMap } from 'rxjs';
 
-import { Record } from '../../core/models/record.model';
+import { CombiRecord } from '../../core/models/record.model';
 import { RecordService } from '../../core/services/record.service';
 import { RegistryService } from '../../core/services/registry.service';
 import { LoadingState } from '../../core/states/loading.state';
@@ -102,11 +102,11 @@ import { LoadingState } from '../../core/states/loading.state';
 })
 export class RecordDetailsComponent {
   loading = inject(LoadingState).loading;
-  record: Record = inject(MAT_DIALOG_DATA);
+  record: CombiRecord = inject(MAT_DIALOG_DATA);
   registries$ = inject(RegistryService).getRegistries();
 
   private recordService = inject(RecordService);
-  private recordUpdateSubject$ = new Subject<Partial<Record>>();
+  private recordUpdateSubject$ = new Subject<Partial<CombiRecord>>();
   recordUpdate$ = this.recordUpdateSubject$.pipe(
     switchMap((data) =>
       this.recordService.updateRecord(this.record.email, data),

@@ -53,37 +53,46 @@ export class CredentialsComponent {
   private recordService = inject(RecordService);
   records$ = this.recordService.getAllRecords();
 
-  private readonly HEIGHT = 455;
-  private readonly WIDTH = 280;
-  private readonly FIRST_ITEM_LEFT = 15;
-  private readonly FIRST_LINE_TOP = 20;
+  private readonly HEIGHT = 10.96;
+  private readonly WIDTH = 7.76;
+  private readonly EXTRA_WIDTH = 7.82;
   private readonly JPEG = 'JPEG';
-  private readonly SECOND_ITEM_LEFT = 315;
-  private readonly SECOND_LINE_TOP = 525;
   private readonly CREDENTIALS_POSITION_DATA: Record<
     number,
     CredentialPositionData
   > = {
     1: {
-      leftPosition: this.FIRST_ITEM_LEFT,
-      topPosition: this.FIRST_LINE_TOP,
+      leftPosition: 0,
+      topPosition: 0,
     },
     2: {
-      leftPosition: this.SECOND_ITEM_LEFT,
-      topPosition: this.FIRST_LINE_TOP,
+      leftPosition: this.EXTRA_WIDTH,
+      topPosition: 0,
     },
     3: {
-      leftPosition: this.FIRST_ITEM_LEFT,
-      topPosition: this.SECOND_LINE_TOP,
+      leftPosition: 0,
+      topPosition: this.HEIGHT,
     },
     4: {
-      leftPosition: this.SECOND_ITEM_LEFT,
-      topPosition: this.SECOND_LINE_TOP,
+      leftPosition: this.EXTRA_WIDTH,
+      topPosition: this.HEIGHT,
+    },
+    5: {
+      leftPosition: 0,
+      topPosition: this.HEIGHT * 2,
+    },
+    6: {
+      leftPosition: this.EXTRA_WIDTH,
+      topPosition: this.HEIGHT * 2,
     },
   };
 
   printCredentials(): void {
-    const pdf = new jsPDF('p', 'pt', 'legal');
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'cm',
+      format: [21.5, 32.9],
+    });
     const quantityOfCredentials = this.credentials?.length;
     let drawCounter = 0;
     let counter = 0;
@@ -106,7 +115,7 @@ export class CredentialsComponent {
         this.HEIGHT,
       );
 
-      if (counter === 4) {
+      if (counter === 6) {
         if (quantityOfCredentials !== drawCounter) {
           pdf.addPage();
         }

@@ -4,10 +4,12 @@ import {
   ElementRef,
   Input,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { QRCodeComponent, QRCodeModule } from 'angularx-qrcode';
 
-import { Record } from '../../core/models/record.model';
+import { TranslateRolePipe } from './translate-role.pipe';
+import { CombiRecord, RecordRole } from '../../core/models/record.model';
 
 @Component({
   selector: 'combi-credential',
@@ -25,9 +27,10 @@ import { Record } from '../../core/models/record.model';
     ></qrcode>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [TranslateRolePipe],
 })
 export class CredentialComponent {
-  @Input({ required: true }) set record(record: Record | undefined) {
+  @Input({ required: true }) set record(record: CombiRecord | undefined) {
     this.loadCredential(record);
   }
 
@@ -37,33 +40,43 @@ export class CredentialComponent {
 
   recordEmail = '';
 
-  readonly HEIGHT = 636;
-  readonly WIDTH = 391;
+  readonly HEIGHT = 565;
+  readonly WIDTH = 400;
 
-  private readonly QR_TOP = 240;
+  private translateRole = inject(TranslateRolePipe);
+
+  private readonly QR_TOP = 200;
   private readonly QR_LEFT = 70;
-  private readonly NAME_TOP = 190;
+  private readonly NAME_TOP = 170;
   private readonly NAME_LEFT = this.WIDTH / 2;
+  private readonly TEMPLATES: Record<RecordRole, string> = {
+    [RecordRole.GUIDE]: 'assets/img/staff.png',
+    [RecordRole.ORGANIZER]: 'assets/img/staff.png',
+    [RecordRole.MENTOR]: 'assets/img/staff.png',
+    [RecordRole.PARTICIPANT]: 'assets/img/participant.png',
+    [RecordRole.KID]: 'assets/img/kid.png',
+  };
 
   @ViewChild('qrCode', { static: true }) private qrCode:
     | QRCodeComponent
     | undefined;
 
-  private loadCredential(record: Record | undefined): void {
+  private loadCredential(record: CombiRecord | undefined): void {
     if (!record) {
       return;
     }
 
     this.recordEmail = record.email;
     const templateImage = new Image();
-    templateImage.src = 'assets/img/credential-template.png';
+    templateImage.src =
+      this.TEMPLATES[record.role] || this.TEMPLATES[RecordRole.PARTICIPANT];
     templateImage.onload = () =>
-      this.loadCredentialImage(templateImage, record.name);
+      this.loadCredentialImage(templateImage, record);
   }
 
   private loadCredentialImage(
     templateImage: HTMLImageElement,
-    recordName: string,
+    record: CombiRecord,
   ): void {
     let qrImage = this.qrCode?.qrcElement.nativeElement.querySelector('img');
 
@@ -71,12 +84,12 @@ export class CredentialComponent {
       qrImage = this.qrCode?.qrcElement.nativeElement.querySelector('canvas');
     }
 
-    this.buildImageContext(templateImage, recordName, qrImage);
+    this.buildImageContext(templateImage, record, qrImage);
   }
 
   private buildImageContext(
     templateImage: HTMLImageElement,
-    recordName: string,
+    record: CombiRecord,
     qrImage: CanvasImageSource,
   ): void {
     const context = (
@@ -91,7 +104,13 @@ export class CredentialComponent {
     context.textAlign = 'center';
 
     context.drawImage(templateImage, 0, 0);
-    context.fillText(recordName, this.NAME_LEFT, this.NAME_TOP);
+    context.fillText(record.name, this.NAME_LEFT, this.NAME_TOP);
+    context.strokeText(
+      this.translateRole.transform(record.role),
+      this.NAME_LEFT,
+      this.NAME_TOP + 24,
+    );
+    context.strokeRect(0, 0, this.WIDTH, this.HEIGHT);
     context.drawImage(qrImage, this.QR_LEFT, this.QR_TOP);
   }
 }
