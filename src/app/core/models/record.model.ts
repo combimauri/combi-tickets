@@ -9,6 +9,7 @@ export interface Record {
   phone: string;
   searchTerm: string;
   type: RecordType;
+  [key: string]: unknown;
 }
 
 export interface RecordListing {

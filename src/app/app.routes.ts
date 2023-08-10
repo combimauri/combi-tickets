@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
 
-import { RootComponent } from './root/root.component';
 import { authGuard } from './core/guards/auth.guard';
 import { loginGuard } from './core/guards/login.guard';
+import { RootComponent } from './root/root.component';
 
 export const routes: Routes = [
   {
@@ -39,5 +39,10 @@ export const routes: Routes = [
     canActivate: [loginGuard],
     loadChildren: () =>
       import('./login/login.routes').then((m) => m.loginRoutes),
+  },
+  {
+    path: '**',
+    redirectTo: '',
+    pathMatch: 'full',
   },
 ];

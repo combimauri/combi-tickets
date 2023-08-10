@@ -15,6 +15,7 @@ import {
   orderBy,
   query,
   startAfter,
+  updateDoc,
   where,
 } from '@angular/fire/firestore';
 import {
@@ -142,6 +143,34 @@ export class RecordService {
     }
 
     return (docData(docRef) as Observable<Record>).pipe(
+      catchError((error) => this.handleErrorGettingRecord(error)),
+      tap(() => this.loadingState.stopLoading()),
+      finalize(() => this.loadingState.stopLoading()),
+    );
+  }
+
+  updateRecord(
+    email: string,
+    data: Partial<Record>,
+  ): Observable<Partial<Record> | undefined> {
+    this.loadingState.startLoading();
+
+    let docRef: DocumentReference<DocumentData>;
+
+    try {
+      docRef = doc(this.db, 'records', email);
+    } catch (error) {
+      this.loadingState.stopLoading();
+
+      return this.handleErrorGettingRecord(error as string);
+    }
+
+    return from(updateDoc(docRef, { ...data })).pipe(
+      map(() => {
+        this.logger.handleSuccess('Record updated successfully.');
+
+        return { ...data };
+      }),
       catchError((error) => this.handleErrorGettingRecord(error)),
       tap(() => this.loadingState.stopLoading()),
       finalize(() => this.loadingState.stopLoading()),

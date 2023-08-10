@@ -1,10 +1,12 @@
 import { AsyncPipe, NgIf, TitleCasePipe } from '@angular/common';
 import { AfterViewInit, Component, inject } from '@angular/core';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { Observable, Subject, map, switchMap } from 'rxjs';
 
+import { RecordDetailsComponent } from '../record-details/record-details.component';
 import { Position } from '../../core/models/position.model';
 import { PageRecords } from '../../core/models/page-records.model';
 import { Record, RecordListing } from '../../core/models/record.model';
@@ -16,6 +18,7 @@ import { SearchBoxComponent } from '../../shared/search-box/search-box.component
   standalone: true,
   imports: [
     AsyncPipe,
+    MatDialogModule,
     MatInputModule,
     MatPaginatorModule,
     MatTableModule,
@@ -53,7 +56,11 @@ import { SearchBoxComponent } from '../../shared/search-box/search-box.component
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="COLUMNS"></tr>
-      <tr mat-row *matRowDef="let row; columns: COLUMNS"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: COLUMNS"
+        (click)="openRecordDetails(row)"
+      ></tr>
     </table>
 
     <mat-paginator
@@ -74,6 +81,16 @@ import { SearchBoxComponent } from '../../shared/search-box/search-box.component
       .mat-column-details small {
         display: block;
       }
+
+      .mat-mdc-row .mat-mdc-cell {
+        border-bottom: 1px solid transparent;
+        border-top: 1px solid transparent;
+        cursor: pointer;
+      }
+
+      .mat-mdc-row:hover .mat-mdc-cell {
+        border-color: currentColor;
+      }
     `,
   ],
 })
@@ -93,8 +110,14 @@ export class RecordListComponent implements AfterViewInit {
     map((records) => this.mapRecordsPosition(records)),
   );
 
+  private dialog = inject(MatDialog);
+
   ngAfterViewInit(): void {
     this.recordsSubject$.next({});
+  }
+
+  openRecordDetails(data: Record): void {
+    this.dialog.open(RecordDetailsComponent, { data });
   }
 
   searchRecord(term: string | Event): void {
