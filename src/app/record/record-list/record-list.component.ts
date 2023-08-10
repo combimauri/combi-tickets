@@ -60,6 +60,7 @@ import { SearchBoxComponent } from '../../shared/search-box/search-box.component
       *ngIf="records$ | async as records"
       aria-label="Select page"
       [length]="total"
+      [pageIndex]="pageIndex"
       [pageSize]="pageSize"
       [pageSizeOptions]="[5, 10, 15, 20, 50, 100]"
       (page)="
@@ -86,8 +87,8 @@ import { SearchBoxComponent } from '../../shared/search-box/search-box.component
 export class RecordListComponent implements AfterViewInit {
   pageSize = 15;
   total = 0;
+  pageIndex = 0;
 
-  private pageIndex = 0;
   private searchTerm = '';
 
   readonly COLUMNS = ['position', 'details', 'type'];
@@ -108,6 +109,7 @@ export class RecordListComponent implements AfterViewInit {
       return;
     }
 
+    this.pageIndex = 0;
     this.searchTerm = term.replace(/\s/g, '').toLowerCase();
 
     this.recordsSubject$.next({});
