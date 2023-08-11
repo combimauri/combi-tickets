@@ -17,13 +17,6 @@ import { debounceTime, tap } from 'rxjs';
       </mat-form-field>
     </form>
   `,
-  styles: [
-    `
-      .mat-mdc-form-field {
-        width: 300px;
-      }
-    `,
-  ],
 })
 export class SearchBoxComponent {
   searchBoxForm = inject(FormBuilder).group({

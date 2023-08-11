@@ -7,10 +7,16 @@ import { MatTableModule } from '@angular/material/table';
 import { Observable, Subject, map, switchMap } from 'rxjs';
 
 import { RecordDetailsComponent } from '../record-details/record-details.component';
+import { RecordRoleSelectorComponent } from '../record-role-selector/record-role-selector.component';
 import { Position } from '../../core/models/position.model';
 import { PageRecords } from '../../core/models/page-records.model';
-import { CombiRecord, RecordListing } from '../../core/models/record.model';
+import {
+  CombiRecord,
+  RecordListing,
+  RecordRole,
+} from '../../core/models/record.model';
 import { RecordService } from '../../core/services/record.service';
+import { TranslateRolePipe } from '../../shared/credential/translate-role.pipe';
 import { SearchBoxComponent } from '../../shared/search-box/search-box.component';
 
 @Component({
@@ -23,13 +29,22 @@ import { SearchBoxComponent } from '../../shared/search-box/search-box.component
     MatPaginatorModule,
     MatTableModule,
     NgIf,
+    RecordRoleSelectorComponent,
     SearchBoxComponent,
     TitleCasePipe,
+    TranslateRolePipe,
   ],
   template: `
     <div class="header">
       <h1> Records </h1>
-      <combi-search-box (search)="searchRecord($event)"></combi-search-box>
+
+      <div class="filters__container">
+        <combi-record-role-selector
+          (selectRole)="filterByRole($event)"
+        ></combi-record-role-selector>
+
+        <combi-search-box (search)="searchRecord($event)"></combi-search-box>
+      </div>
     </div>
 
     <table mat-table [dataSource]="records$" class="mat-elevation-z1">
@@ -51,7 +66,7 @@ import { SearchBoxComponent } from '../../shared/search-box/search-box.component
       <ng-container matColumnDef="role">
         <th mat-header-cell *matHeaderCellDef> Role </th>
         <td mat-cell *matCellDef="let element">
-          {{ element.role | titlecase }}
+          {{ element.role | translateRole | titlecase }}
         </td>
       </ng-container>
 
@@ -78,6 +93,12 @@ import { SearchBoxComponent } from '../../shared/search-box/search-box.component
   `,
   styles: [
     `
+      .filters__container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
       .mat-column-details small {
         display: block;
       }
@@ -100,6 +121,7 @@ export class RecordListComponent implements AfterViewInit {
   pageIndex = 0;
 
   private searchTerm = '';
+  private selectedRole: RecordRole | string = '';
 
   readonly COLUMNS = ['position', 'details', 'role'];
 
@@ -120,15 +142,20 @@ export class RecordListComponent implements AfterViewInit {
     this.dialog.open(RecordDetailsComponent, { data });
   }
 
+  filterByRole(role: RecordRole | string): void {
+    this.selectedRole = role;
+
+    this.resetTable();
+  }
+
   searchRecord(term: string | Event): void {
     if (typeof term !== 'string') {
       return;
     }
 
-    this.pageIndex = 0;
     this.searchTerm = term.replace(/\s/g, '').toLowerCase();
 
-    this.recordsSubject$.next({});
+    this.resetTable();
   }
 
   handlePaginationChange(
@@ -150,22 +177,38 @@ export class RecordListComponent implements AfterViewInit {
     }
   }
 
+  private resetTable(): void {
+    this.pageIndex = 0;
+
+    this.recordsSubject$.next({});
+  }
+
   private loadRecords({
     firstRecord,
     lastRecord,
   }: PageRecords): Observable<CombiRecord[]> {
     if (lastRecord) {
       return this.recordService
-        .getNextPageOfRecords(lastRecord, this.pageSize, this.searchTerm)
+        .getNextPageOfRecords(
+          lastRecord,
+          this.pageSize,
+          this.selectedRole,
+          this.searchTerm,
+        )
         .pipe(map((listing) => this.handleLoadRecordListing(listing)));
     } else if (firstRecord) {
       return this.recordService
-        .getPreviousPageOfRecords(firstRecord, this.pageSize, this.searchTerm)
+        .getPreviousPageOfRecords(
+          firstRecord,
+          this.pageSize,
+          this.selectedRole,
+          this.searchTerm,
+        )
         .pipe(map((listing) => this.handleLoadRecordListing(listing)));
     }
 
     return this.recordService
-      .getFirstPageOfRecords(this.pageSize, this.searchTerm)
+      .getFirstPageOfRecords(this.pageSize, this.selectedRole, this.searchTerm)
       .pipe(map((listing) => this.handleLoadRecordListing(listing)));
   }
 

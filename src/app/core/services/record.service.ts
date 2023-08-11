@@ -30,7 +30,7 @@ import {
 } from 'rxjs';
 
 import { LoggerService } from './logger.service';
-import { CombiRecord, RecordListing } from '../models/record.model';
+import { CombiRecord, RecordListing, RecordRole } from '../models/record.model';
 import { LoadingState } from '../states/loading.state';
 
 @Injectable({ providedIn: 'root' })
@@ -59,17 +59,19 @@ export class RecordService {
 
   getFirstPageOfRecords(
     pageSize: number,
+    roleFilter: RecordRole | string,
     searchTerm: string,
   ): Observable<RecordListing | undefined> {
     this.loadingState.startLoading();
 
     let dbQuery = query(collection(this.db, 'records'));
+    dbQuery = this.addRoleFilterToQuery(dbQuery, roleFilter);
     dbQuery = this.addSearchTermToQuery(dbQuery, searchTerm);
     dbQuery = query(dbQuery, orderBy('searchTerm'), limit(pageSize));
 
     return (collectionData(dbQuery) as Observable<CombiRecord[]>).pipe(
       switchMap((items) =>
-        this.getRecordsCount(searchTerm).pipe(
+        this.getRecordsCount(roleFilter, searchTerm).pipe(
           map((total) => ({ items, total })),
         ),
       ),
@@ -82,11 +84,13 @@ export class RecordService {
   getNextPageOfRecords(
     lastVisibleRecord: CombiRecord,
     pageSize: number,
+    roleFilter: RecordRole | string,
     searchTerm: string,
   ): Observable<RecordListing | undefined> {
     this.loadingState.startLoading();
 
     let dbQuery = query(collection(this.db, 'records'));
+    dbQuery = this.addRoleFilterToQuery(dbQuery, roleFilter);
     dbQuery = this.addSearchTermToQuery(dbQuery, searchTerm);
     dbQuery = query(
       dbQuery,
@@ -97,7 +101,7 @@ export class RecordService {
 
     return (collectionData(dbQuery) as Observable<CombiRecord[]>).pipe(
       switchMap((items) =>
-        this.getRecordsCount(searchTerm).pipe(
+        this.getRecordsCount(roleFilter, searchTerm).pipe(
           map((total) => ({ items, total })),
         ),
       ),
@@ -110,11 +114,13 @@ export class RecordService {
   getPreviousPageOfRecords(
     lastVisibleRecord: CombiRecord,
     pageSize: number,
+    roleFilter: RecordRole | string,
     searchTerm: string,
   ): Observable<RecordListing | undefined> {
     this.loadingState.startLoading();
 
     let dbQuery = query(collection(this.db, 'records'));
+    dbQuery = this.addRoleFilterToQuery(dbQuery, roleFilter);
     dbQuery = this.addSearchTermToQuery(dbQuery, searchTerm);
     dbQuery = query(
       dbQuery,
@@ -125,7 +131,7 @@ export class RecordService {
 
     return (collectionData(dbQuery) as Observable<CombiRecord[]>).pipe(
       switchMap((items) =>
-        this.getRecordsCount(searchTerm).pipe(
+        this.getRecordsCount(roleFilter, searchTerm).pipe(
           map((total) => ({ items, total })),
         ),
       ),
@@ -143,8 +149,6 @@ export class RecordService {
     try {
       docRef = doc(this.db, 'records', email);
     } catch (error) {
-      this.loadingState.stopLoading();
-
       return this.handleErrorGettingRecord(error as string);
     }
 
@@ -166,8 +170,6 @@ export class RecordService {
     try {
       docRef = doc(this.db, 'records', email);
     } catch (error) {
-      this.loadingState.stopLoading();
-
       return this.handleErrorGettingRecord(error as string);
     }
 
@@ -175,12 +177,23 @@ export class RecordService {
       map(() => {
         this.logger.handleSuccess('Record updated successfully.');
 
-        return { ...data };
+        return { ...data, email };
       }),
       catchError((error) => this.handleErrorGettingRecord(error)),
       tap(() => this.loadingState.stopLoading()),
       finalize(() => this.loadingState.stopLoading()),
     );
+  }
+
+  private addRoleFilterToQuery(
+    dbQuery: Query<DocumentData>,
+    roleFilter: RecordRole | string,
+  ): Query<DocumentData> {
+    if (!roleFilter) {
+      return dbQuery;
+    }
+
+    return query(dbQuery, where('role', '==', roleFilter));
   }
 
   private addSearchTermToQuery(
@@ -198,8 +211,12 @@ export class RecordService {
     );
   }
 
-  private getRecordsCount(searchTerm: string): Observable<number> {
+  private getRecordsCount(
+    roleFilter: RecordRole | string,
+    searchTerm: string,
+  ): Observable<number> {
     let dbQuery = query(collection(this.db, 'records'));
+    dbQuery = this.addRoleFilterToQuery(dbQuery, roleFilter);
     dbQuery = this.addSearchTermToQuery(dbQuery, searchTerm);
 
     return from(getCountFromServer(dbQuery)).pipe(
@@ -208,6 +225,7 @@ export class RecordService {
   }
 
   private handleErrorGettingRecord(error: string): Observable<undefined> {
+    this.loadingState.stopLoading();
     this.logger.handleError(error);
 
     return of(undefined);

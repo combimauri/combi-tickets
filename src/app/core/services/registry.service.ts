@@ -27,6 +27,7 @@ export class RegistryService {
   }
 
   private handleErrorGettingRegistry(error: string): Observable<undefined> {
+    this.loadingState.stopLoading();
     this.logger.handleError(error);
 
     return of(undefined);
