@@ -1,3 +1,5 @@
+@use '@angular/material' as material;
+
 html,
 body {
   height: 100%;
@@ -15,11 +17,11 @@ body {
 }
 
 .header {
-  align-items: center;
+  align-items: flex-start;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  min-height: 78px;
+  min-height: 66px;
 }
 
 video,
@@ -27,4 +29,12 @@ video,
   aspect-ratio: 1 / 1;
   max-width: 100%;
   width: 700px;
+}
+
+.dense {
+  @include material.all-component-densities(-3);
+
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
 }

@@ -29,10 +29,12 @@ import { RegistryService } from '../core/services/registry.service';
     <div class="header">
       <h1> Scanner </h1>
 
-      <combi-scanner-registry-selector
-        [registries]="registries$ | async"
-        (selectRegistry)="setSelectedRegistry($event)"
-      ></combi-scanner-registry-selector>
+      <div class="dense">
+        <combi-scanner-registry-selector
+          [registries]="registries$ | async"
+          (selectRegistry)="setSelectedRegistry($event)"
+        ></combi-scanner-registry-selector>
+      </div>
     </div>
 
     <div class="scanner-container">

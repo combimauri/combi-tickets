@@ -1,10 +1,11 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AsyncPipe, NgIf, TitleCasePipe } from '@angular/common';
 import { AfterViewInit, Component, inject } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
-import { Observable, Subject, map, switchMap } from 'rxjs';
+import { Observable, Subject, map, shareReplay, switchMap } from 'rxjs';
 
 import { RecordDetailsComponent } from '../record-details/record-details.component';
 import { RecordRoleSelectorComponent } from '../record-role-selector/record-role-selector.component';
@@ -38,7 +39,7 @@ import { SearchBoxComponent } from '../../shared/search-box/search-box.component
     <div class="header">
       <h1> Records </h1>
 
-      <div class="filters__container">
+      <div class="filters__container dense">
         <combi-record-role-selector
           (selectRole)="filterByRole($event)"
         ></combi-record-role-selector>
@@ -60,6 +61,9 @@ import { SearchBoxComponent } from '../../shared/search-box/search-box.component
           <small>
             {{ element.email }}
           </small>
+          <small *ngIf="isHandset$ | async">
+            {{ element.role | translateRole | titlecase }}
+          </small>
         </td>
       </ng-container>
 
@@ -70,10 +74,10 @@ import { SearchBoxComponent } from '../../shared/search-box/search-box.component
         </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="COLUMNS"></tr>
+      <tr mat-header-row *matHeaderRowDef="columns$ | async"></tr>
       <tr
         mat-row
-        *matRowDef="let row; columns: COLUMNS"
+        *matRowDef="let row; columns: columns$ | async"
         (click)="openRecordDetails(row)"
       ></tr>
     </table>
@@ -97,6 +101,7 @@ import { SearchBoxComponent } from '../../shared/search-box/search-box.component
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
+        margin-bottom: 10px;
       }
 
       .mat-column-details small {
@@ -104,13 +109,11 @@ import { SearchBoxComponent } from '../../shared/search-box/search-box.component
       }
 
       .mat-mdc-row .mat-mdc-cell {
-        border-bottom: 1px solid transparent;
-        border-top: 1px solid transparent;
         cursor: pointer;
       }
 
-      .mat-mdc-row:hover .mat-mdc-cell {
-        border-color: currentColor;
+      .mat-mdc-row:hover {
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
       }
     `,
   ],
@@ -123,7 +126,16 @@ export class RecordListComponent implements AfterViewInit {
   private searchTerm = '';
   private selectedRole: RecordRole | string = '';
 
-  readonly COLUMNS = ['position', 'details', 'role'];
+  private breakpointObserver = inject(BreakpointObserver);
+  isHandset$ = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
+    map((result) => result.matches),
+    shareReplay(),
+  );
+  columns$ = this.isHandset$.pipe(
+    map((isHandset) =>
+      isHandset ? ['position', 'details'] : ['position', 'details', 'role'],
+    ),
+  );
 
   private recordService = inject(RecordService);
   private recordsSubject$ = new Subject<PageRecords>();
