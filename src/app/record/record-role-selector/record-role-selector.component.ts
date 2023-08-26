@@ -1,21 +1,14 @@
-import { NgFor, TitleCasePipe } from '@angular/common';
+import { NgFor } from '@angular/common';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 
 import { RecordRole } from '../../core/models/record.model';
-import { TranslateRolePipe } from '../../shared/credential/translate-role.pipe';
 
 @Component({
   selector: 'combi-record-role-selector',
   standalone: true,
-  imports: [
-    MatFormFieldModule,
-    MatSelectModule,
-    NgFor,
-    TranslateRolePipe,
-    TitleCasePipe,
-  ],
+  imports: [MatFormFieldModule, MatSelectModule, NgFor],
   template: `
     <mat-form-field appearance="outline">
       <mat-label>Role</mat-label>
@@ -25,20 +18,14 @@ import { TranslateRolePipe } from '../../shared/credential/translate-role.pipe';
       >
         <mat-option value=""> All </mat-option>
         <mat-option *ngFor="let role of ROLES" [value]="role">
-          {{ role | translateRole | titlecase }}
+          {{ role }}
         </mat-option>
       </mat-select>
     </mat-form-field>
   `,
 })
 export class RecordRoleSelectorComponent {
-  readonly ROLES = [
-    RecordRole.PARTICIPANT,
-    RecordRole.KID,
-    RecordRole.MENTOR,
-    RecordRole.GUIDE,
-    RecordRole.ORGANIZER,
-  ];
+  readonly ROLES = [RecordRole.Asistente, RecordRole.Speaker, RecordRole.Staff];
 
   @Output() selectRole = new EventEmitter<RecordRole | string>();
 

@@ -1,5 +1,5 @@
 import { KeyValuePipe, NgFor, NgIf } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
@@ -26,7 +26,7 @@ import { CombiRecord } from '../../core/models/record.model';
       </ng-container>
 
       <ng-template #noRecord>
-        Error updating record.
+        {{ errorMessage }}
 
         <img src="assets/img/error.png" alt="Error icon" />
       </ng-template>
@@ -46,11 +46,19 @@ import { CombiRecord } from '../../core/models/record.model';
     `,
   ],
 })
-export class ScannerDialogComponent {
-  record: Partial<CombiRecord> | undefined = inject(MAT_DIALOG_DATA);
+export class ScannerDialogComponent implements OnInit {
+  record: Partial<CombiRecord> | string | undefined = inject(MAT_DIALOG_DATA);
+
+  errorMessage = 'Error updating record.';
 
   private dialogRef = inject(MatDialogRef<ScannerDialogComponent>);
 
+  ngOnInit(): void {
+    if (typeof this.record === 'string') {
+      this.errorMessage = this.record;
+      this.record = undefined;
+    }
+  }
   close(): void {
     this.dialogRef.close();
   }

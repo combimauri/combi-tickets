@@ -71,11 +71,20 @@ export class ScannerComponent {
   private recordService = inject(RecordService);
   private recordSubject$ = new Subject<string>();
   record$ = this.recordSubject$.pipe(
-    switchMap((email) => {
-      if (this.selectedRegistry) {
+    switchMap((email) => this.recordService.getRecordByEmail(email)),
+    switchMap((record) => {
+      if (record && this.selectedRegistry) {
+        if (record['emiStudent'] === 'Si') {
+          return of('EMI student.');
+        }
+
+        if (record[this.selectedRegistry.id]) {
+          return of('The record was already registered.');
+        }
+
         const data = { [this.selectedRegistry.id]: true };
 
-        return this.recordService.updateRecord(email, data);
+        return this.recordService.updateRecord(record.email, data);
       }
 
       return of(undefined);
@@ -104,7 +113,9 @@ export class ScannerComponent {
     this.recordSubject$.next(this.scannedEmail);
   }
 
-  private openScannerDialog(data: Partial<CombiRecord> | undefined): void {
+  private openScannerDialog(
+    data: Partial<CombiRecord> | string | undefined,
+  ): void {
     const dialogRef = this.dialog.open(ScannerDialogComponent, { data });
 
     dialogRef

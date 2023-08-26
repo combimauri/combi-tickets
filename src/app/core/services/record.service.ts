@@ -26,6 +26,7 @@ import {
   map,
   of,
   switchMap,
+  take,
   tap,
 } from 'rxjs';
 
@@ -153,6 +154,7 @@ export class RecordService {
     }
 
     return (docData(docRef) as Observable<CombiRecord>).pipe(
+      take(1),
       catchError((error) => this.handleErrorGettingRecord(error)),
       tap(() => this.loadingState.stopLoading()),
       finalize(() => this.loadingState.stopLoading()),

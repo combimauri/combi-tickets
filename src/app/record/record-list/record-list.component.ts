@@ -1,5 +1,5 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { AsyncPipe, NgIf, TitleCasePipe } from '@angular/common';
+import { AsyncPipe, NgIf } from '@angular/common';
 import { AfterViewInit, Component, inject } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
@@ -17,7 +17,6 @@ import {
   RecordRole,
 } from '../../core/models/record.model';
 import { RecordService } from '../../core/services/record.service';
-import { TranslateRolePipe } from '../../shared/credential/translate-role.pipe';
 import { SearchBoxComponent } from '../../shared/search-box/search-box.component';
 
 @Component({
@@ -32,8 +31,6 @@ import { SearchBoxComponent } from '../../shared/search-box/search-box.component
     NgIf,
     RecordRoleSelectorComponent,
     SearchBoxComponent,
-    TitleCasePipe,
-    TranslateRolePipe,
   ],
   template: `
     <div class="header">
@@ -62,7 +59,7 @@ import { SearchBoxComponent } from '../../shared/search-box/search-box.component
             {{ element.email }}
           </small>
           <small *ngIf="isHandset$ | async">
-            {{ element.role | translateRole | titlecase }}
+            {{ element.role }}
           </small>
         </td>
       </ng-container>
@@ -70,7 +67,7 @@ import { SearchBoxComponent } from '../../shared/search-box/search-box.component
       <ng-container matColumnDef="role">
         <th mat-header-cell *matHeaderCellDef> Role </th>
         <td mat-cell *matCellDef="let element">
-          {{ element.role | translateRole | titlecase }}
+          {{ element.role }}
         </td>
       </ng-container>
 

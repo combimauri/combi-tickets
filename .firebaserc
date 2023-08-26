@@ -1,14 +1,14 @@
 {
   "targets": {
-    "wgj-bolivia": {
+    "io-extended-cocha": {
       "hosting": {
         "combi-tickets": [
-          "wgjbo-tickets"
+          "io-cbba-checkin"
         ]
       }
     }
   },
   "projects": {
-    "default": "wgj-bolivia"
+    "default": "io-extended-cocha"
   }
 }
