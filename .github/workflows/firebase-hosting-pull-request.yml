@@ -17,4 +17,4 @@ jobs:
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_IO_EXTENDED_COCHA }}'
-          projectId: wgj-bolivia
+          projectId: io-extended-cocha
