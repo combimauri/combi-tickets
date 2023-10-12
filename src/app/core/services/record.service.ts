@@ -40,13 +40,15 @@ export class RecordService {
   private db = inject(Firestore);
   private logger = inject(LoggerService);
 
+  private readonly COLLECTION_NAME = 'records-bwd';
+
   getAllRecords(): Observable<CombiRecord[] | undefined> {
     this.loadingState.startLoading();
 
     return (
       collectionData(
         query(
-          collection(this.db, 'records'),
+          collection(this.db, this.COLLECTION_NAME),
           orderBy('role'),
           orderBy('searchTerm'),
         ),
@@ -65,7 +67,7 @@ export class RecordService {
   ): Observable<RecordListing | undefined> {
     this.loadingState.startLoading();
 
-    let dbQuery = query(collection(this.db, 'records'));
+    let dbQuery = query(collection(this.db, this.COLLECTION_NAME));
     dbQuery = this.addRoleFilterToQuery(dbQuery, roleFilter);
     dbQuery = this.addSearchTermToQuery(dbQuery, searchTerm);
     dbQuery = query(dbQuery, orderBy('searchTerm'), limit(pageSize));
@@ -90,7 +92,7 @@ export class RecordService {
   ): Observable<RecordListing | undefined> {
     this.loadingState.startLoading();
 
-    let dbQuery = query(collection(this.db, 'records'));
+    let dbQuery = query(collection(this.db, this.COLLECTION_NAME));
     dbQuery = this.addRoleFilterToQuery(dbQuery, roleFilter);
     dbQuery = this.addSearchTermToQuery(dbQuery, searchTerm);
     dbQuery = query(
@@ -120,7 +122,7 @@ export class RecordService {
   ): Observable<RecordListing | undefined> {
     this.loadingState.startLoading();
 
-    let dbQuery = query(collection(this.db, 'records'));
+    let dbQuery = query(collection(this.db, this.COLLECTION_NAME));
     dbQuery = this.addRoleFilterToQuery(dbQuery, roleFilter);
     dbQuery = this.addSearchTermToQuery(dbQuery, searchTerm);
     dbQuery = query(
@@ -148,7 +150,7 @@ export class RecordService {
     let docRef: DocumentReference<DocumentData>;
 
     try {
-      docRef = doc(this.db, 'records', email);
+      docRef = doc(this.db, this.COLLECTION_NAME, email);
     } catch (error) {
       return this.handleErrorGettingRecord(error as string);
     }
@@ -170,7 +172,7 @@ export class RecordService {
     let docRef: DocumentReference<DocumentData>;
 
     try {
-      docRef = doc(this.db, 'records', email);
+      docRef = doc(this.db, this.COLLECTION_NAME, email);
     } catch (error) {
       return this.handleErrorGettingRecord(error as string);
     }
@@ -217,7 +219,7 @@ export class RecordService {
     roleFilter: RecordRole | string,
     searchTerm: string,
   ): Observable<number> {
-    let dbQuery = query(collection(this.db, 'records'));
+    let dbQuery = query(collection(this.db, this.COLLECTION_NAME));
     dbQuery = this.addRoleFilterToQuery(dbQuery, roleFilter);
     dbQuery = this.addSearchTermToQuery(dbQuery, searchTerm);
 
