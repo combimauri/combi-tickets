@@ -8,10 +8,10 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 
-import { RecordDetailsComponent } from '../../record-details/record-details.component';
 import { CombiRecord } from '../../../core/models/record.model';
 import { LoadingState } from '../../../core/states/loading.state';
 import { CredentialComponent } from '../../../shared/credential/credential.component';
+import { RecordDetailsComponent } from '../../record-details/record-details.component';
 
 @Component({
   selector: 'combi-wa-send-form',
@@ -48,15 +48,21 @@ import { CredentialComponent } from '../../../shared/credential/credential.compo
         </textarea>
       </mat-form-field>
 
-      <button
-        mat-raised-button
-        color="primary"
-        class="btn"
-        type="button"
-        (click)="sendMessage()"
-      >
-        Send
-      </button>
+      <div class="actions-container">
+        <button mat-button cdkFocusInitial type="button" (click)="close()">
+          Close
+        </button>
+
+        <button
+          mat-raised-button
+          color="primary"
+          class="btn"
+          type="button"
+          (click)="sendMessage()"
+        >
+          Send
+        </button>
+      </div>
     </div>
   `,
   styles: [
@@ -100,12 +106,12 @@ export class WASendFormComponent {
     }
 
     if (credentialUrl) {
-      this.message = `Hola ${this.record.name}, tu credencial es: ${credentialUrl}`;
+      this.message = `Hola ${this.record.name}, tu credencial para el evento "Junt@s en Comunidad" es: ${credentialUrl} ¡Nos vemos ahí!`;
       return;
     }
 
     if (this.record.credentialUrl) {
-      this.message = `Hola ${this.record.name}, tu credencial es: ${this.record.credentialUrl}`;
+      this.message = `Hola ${this.record.name}, tu credencial para el evento "Junt@s en Comunidad" es: ${this.record.credentialUrl} ¡Nos vemos ahí!`;
     } else {
       this.credential?.saveInStorage();
     }

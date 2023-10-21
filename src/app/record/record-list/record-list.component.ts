@@ -7,6 +7,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Observable, Subject, map, shareReplay, switchMap } from 'rxjs';
 
 import { RecordDetailsComponent } from '../record-details/record-details.component';
@@ -34,6 +35,7 @@ import { WASendFormComponent } from '../send-form/wa-send-form/wa-send-form.comp
     MatInputModule,
     MatPaginatorModule,
     MatTableModule,
+    MatTooltipModule,
     NgIf,
     RecordRoleSelectorComponent,
     SearchBoxComponent,
@@ -83,6 +85,7 @@ import { WASendFormComponent } from '../send-form/wa-send-form/wa-send-form.comp
           <button
             *ngIf="element.email.includes('@')"
             mat-icon-button
+            matTooltip="Send Email"
             (click)="openSendForm(element)"
           >
             <mat-icon>send</mat-icon>
@@ -90,11 +93,16 @@ import { WASendFormComponent } from '../send-form/wa-send-form/wa-send-form.comp
           <button
             *ngIf="element.phone"
             mat-icon-button
+            matTooltip="Send WhatsApp Message"
             (click)="openWASendForm(element)"
           >
             <mat-icon>sms</mat-icon>
           </button>
-          <button mat-icon-button (click)="openRecordDetails(element)">
+          <button
+            mat-icon-button
+            matTooltip="Open Details"
+            (click)="openRecordDetails(element)"
+          >
             <mat-icon>visibility</mat-icon>
           </button>
         </td>

@@ -8,10 +8,10 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 
-import { RecordDetailsComponent } from '../record-details/record-details.component';
 import { CombiRecord } from '../../core/models/record.model';
 import { LoadingState } from '../../core/states/loading.state';
 import { CredentialComponent } from '../../shared/credential/credential.component';
+import { RecordDetailsComponent } from '../record-details/record-details.component';
 
 @Component({
   selector: 'combi-send-form',
@@ -24,7 +24,7 @@ import { CredentialComponent } from '../../shared/credential/credential.componen
     ReactiveFormsModule,
   ],
   template: `
-    <h1 mat-dialog-title> Send message to {{ record.name }} </h1>
+    <h1 mat-dialog-title> Send email to {{ record.name }} </h1>
 
     <div mat-dialog-content>
       <combi-credential
@@ -40,7 +40,6 @@ import { CredentialComponent } from '../../shared/credential/credential.componen
         class="send-form"
         method="post"
         target="_blank"
-        (ngSubmit)="close()"
       >
         <mat-form-field class="hidden">
           <mat-label>Name</mat-label>
@@ -70,9 +69,15 @@ import { CredentialComponent } from '../../shared/credential/credential.componen
           </textarea>
         </mat-form-field>
 
-        <button mat-raised-button color="primary" class="btn" type="submit">
-          Send
-        </button>
+        <div class="actions-container">
+          <button mat-button cdkFocusInitial type="button" (click)="close()">
+            Close
+          </button>
+
+          <button mat-raised-button color="primary" class="btn" type="submit">
+            Send
+          </button>
+        </div>
       </form>
     </div>
   `,
@@ -117,12 +122,12 @@ export class SendFormComponent {
     }
 
     if (credentialUrl) {
-      this.message = `Hola ${this.record.name}, tu credencial es: ${credentialUrl}`;
+      this.message = `Hola ${this.record.name}, tu credencial para el evento "Junt@s en Comunidad" es: ${credentialUrl} ¡Nos vemos ahí!`;
       return;
     }
 
     if (this.record.credentialUrl) {
-      this.message = `Hola ${this.record.name}, tu credencial es: ${this.record.credentialUrl}`;
+      this.message = `Hola ${this.record.name}, tu credencial para el evento "Junt@s en Comunidad" es: ${this.record.credentialUrl} ¡Nos vemos ahí!`;
     } else {
       this.credential?.saveInStorage();
     }

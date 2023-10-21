@@ -77,6 +77,7 @@ import { CredentialComponent } from '../../shared/credential/credential.componen
     </div>
 
     <div mat-dialog-actions class="actions-container">
+      <button mat-button cdkFocusInitial (click)="close()"> Close </button>
       <button
         mat-raised-button
         color="primary"
@@ -85,7 +86,6 @@ import { CredentialComponent } from '../../shared/credential/credential.componen
       >
         Download Credential
       </button>
-      <button mat-button cdkFocusInitial (click)="close()"> Ok </button>
     </div>
   `,
   styles: [
