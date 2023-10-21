@@ -9,9 +9,10 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { Subject, switchMap } from 'rxjs';
+import { Subject, switchMap, tap } from 'rxjs';
 
 import { CombiRecord } from '../../core/models/record.model';
+import { Registry } from '../../core/models/registry.model';
 import { RecordService } from '../../core/services/record.service';
 import { RegistryService } from '../../core/services/registry.service';
 import { LoadingState } from '../../core/states/loading.state';
@@ -51,7 +52,7 @@ import { CredentialComponent } from '../../shared/credential/credential.componen
             <mat-chip-option
               *ngFor="let registry of registries$ | async"
               [selected]="record[registry.id] === true"
-              (click)="toggleRegistry(registry.id)"
+              (click)="toggleRegistry(registry)"
             >
               {{ registry.label }}
             </mat-chip-option>
@@ -120,12 +121,23 @@ export class RecordDetailsComponent {
     switchMap((data) =>
       this.recordService.updateRecord(this.record.email, data),
     ),
+    tap((data) => (this.record = { ...this.record, ...data })),
   );
 
   private dialogRef = inject(MatDialogRef<RecordDetailsComponent>);
 
-  toggleRegistry(registryId: string): void {
-    const data = { [registryId]: !this.record[registryId] };
+  toggleRegistry(registry: Registry): void {
+    let data: Partial<CombiRecord> = {
+      [registry.id]: !this.record[registry.id],
+    };
+
+    if (registry.main) {
+      if (data[registry.id]) {
+        data = { ...data, mainRegistryDate: new Date() };
+      } else {
+        data = { ...data, mainRegistryDate: null, checkInPosition: 0 };
+      }
+    }
 
     this.recordUpdateSubject$.next(data);
   }

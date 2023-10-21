@@ -58,6 +58,20 @@ export class RecordService {
     );
   }
 
+  getCheckedInRecords(): Observable<CombiRecord[] | undefined> {
+    this.loadingState.startLoading();
+
+    let dbQuery = query(collection(this.db, this.COLLECTION_NAME));
+    dbQuery = query(dbQuery, where('checkIn', '==', true));
+    dbQuery = query(dbQuery, orderBy('mainRegistryDate'));
+
+    return (collectionData(dbQuery) as Observable<CombiRecord[]>).pipe(
+      catchError((error) => this.handleErrorGettingRecord(error)),
+      tap(() => this.loadingState.stopLoading()),
+      finalize(() => this.loadingState.stopLoading()),
+    );
+  }
+
   getFirstPageOfRecords(
     pageSize: number,
     roleFilter: RecordRole | string,
@@ -164,6 +178,7 @@ export class RecordService {
   updateRecord(
     email: string,
     data: Partial<CombiRecord>,
+    displayToast = true,
   ): Observable<Partial<CombiRecord> | undefined> {
     this.loadingState.startLoading();
 
@@ -177,7 +192,9 @@ export class RecordService {
 
     return from(updateDoc(docRef, { ...data })).pipe(
       map(() => {
-        this.logger.handleSuccess('Record updated successfully.');
+        if (displayToast) {
+          this.logger.handleSuccess('Record updated successfully.');
+        }
 
         return { ...data, email };
       }),

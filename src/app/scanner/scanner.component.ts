@@ -1,9 +1,9 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
-import { Subject, of, switchMap, tap } from 'rxjs';
+import { Subject, of, switchMap, take, tap } from 'rxjs';
 
 import { ScannerDialogComponent } from './scanner-dialog/scanner-dialog.component';
 import { ScannerRegistrySelectorComponent } from './scanner-registry-selector/scanner-registry-selector.component';
@@ -18,6 +18,7 @@ import { RegistryService } from '../core/services/registry.service';
   imports: [
     AsyncPipe,
     MatDialogModule,
+    NgFor,
     NgIf,
     ScannerDialogComponent,
     ScannerRegistrySelectorComponent,
@@ -49,6 +50,14 @@ import { RegistryService } from '../core/services/registry.service';
         </div>
       </ng-template>
     </div>
+
+    <div [hidden]="true">
+      <ul>
+        <li *ngFor="let record of checkedInRecords$ | async; index as i">
+          {{ i + 1 }} - {{ record.email }}
+        </li>
+      </ul>
+    </div>
   `,
   styles: [
     `
@@ -78,11 +87,23 @@ export class ScannerComponent {
           return of('The record was already registered.');
         }
 
-        const data = { [this.selectedRegistry.id]: true };
+        if (this.selectedRegistry.limit) {
+          const position = Number(record['checkInPosition']);
 
-        return this.recordService
-          .updateRecord(record.email, data)
-          .pipe(tap((record) => this.updateRegistries(record)));
+          if (!position) {
+            return of('The record was not checked in.');
+          } else if (position > this.selectedRegistry.limit) {
+            return of('The record is not allowed to register.');
+          }
+        }
+
+        let data: Partial<CombiRecord> = { [this.selectedRegistry.id]: true };
+
+        if (this.selectedRegistry.main) {
+          data = { ...data, mainRegistryDate: new Date() };
+        }
+
+        return this.recordService.updateRecord(record.email, data);
       }
 
       return of(undefined);
@@ -92,6 +113,32 @@ export class ScannerComponent {
 
   registries$ = inject(RegistryService).getRegistries();
   selectedRegistry: Registry | undefined;
+
+  checkedInRecords$ = inject(RecordService)
+    .getCheckedInRecords()
+    .pipe(
+      tap(
+        (records) =>
+          records?.forEach((record, index) => {
+            const position = index + 1;
+
+            if (record['checkInPosition'] === position) {
+              return;
+            }
+
+            this.recordService
+              .updateRecord(
+                record.email,
+                {
+                  checkInPosition: position,
+                },
+                false,
+              )
+              .pipe(take(1))
+              .subscribe();
+          }),
+      ),
+    );
 
   private scannedEmail = '';
   private dialog = inject(MatDialog);
@@ -120,11 +167,5 @@ export class ScannerComponent {
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => (this.scannedEmail = ''));
-  }
-
-  private updateRegistries(record: Partial<CombiRecord> | undefined): void {
-    if (this.selectedRegistry?.main) {
-      console.log('updateRegistries', record);
-    }
   }
 }
