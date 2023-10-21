@@ -42,18 +42,16 @@ export class RecordService {
 
   private readonly COLLECTION_NAME = 'records-mt';
 
-  getAllRecords(): Observable<CombiRecord[] | undefined> {
+  getAllRecords(
+    roleFilter: RecordRole | string,
+  ): Observable<CombiRecord[] | undefined> {
     this.loadingState.startLoading();
 
-    return (
-      collectionData(
-        query(
-          collection(this.db, this.COLLECTION_NAME),
-          orderBy('role'),
-          orderBy('searchTerm'),
-        ),
-      ) as Observable<CombiRecord[]>
-    ).pipe(
+    let dbQuery = query(collection(this.db, this.COLLECTION_NAME));
+    dbQuery = this.addRoleFilterToQuery(dbQuery, roleFilter);
+    dbQuery = query(dbQuery, orderBy('role'), orderBy('searchTerm'));
+
+    return (collectionData(dbQuery) as Observable<CombiRecord[]>).pipe(
       catchError((error) => this.handleErrorGettingRecord(error)),
       tap(() => this.loadingState.stopLoading()),
       finalize(() => this.loadingState.stopLoading()),

@@ -80,8 +80,8 @@ import { CredentialComponent } from '../../shared/credential/credential.componen
       <button
         mat-raised-button
         color="primary"
-        [disabled]="loading"
-        (click)="credential.saveInStorage()"
+        [disabled]="loading()"
+        (click)="credential.print()"
       >
         Download Credential
       </button>

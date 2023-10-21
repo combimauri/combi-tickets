@@ -36,7 +36,7 @@ import { CredentialComponent } from '../../shared/credential/credential.componen
       ></combi-credential>
 
       <form
-        action="https://script.google.com/macros/s/AKfycbxXi7Fsd_7it0QSkxRKfVyrBwg3Nj-4JFWLgeaURUOHq6pEJVIFWWsgIXKhQik7i3EFcA/exec"
+        action="https://script.google.com/macros/s/AKfycbzOL4R-mlgaD4nu2RkjBWfCrRjfrIPxl6lO2fjat9cXdn60OpxK7LewaSJOZhe3K9RpLg/exec"
         class="send-form"
         method="post"
         target="_blank"

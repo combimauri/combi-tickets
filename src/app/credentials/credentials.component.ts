@@ -2,8 +2,11 @@ import { Component, QueryList, ViewChildren, inject } from '@angular/core';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { jsPDF } from 'jspdf';
+import { BehaviorSubject, switchMap } from 'rxjs';
 
+import { RecordRole } from '../core/models/record.model';
 import { RecordService } from '../core/services/record.service';
+import { RecordRoleSelectorComponent } from '../record/record-role-selector/record-role-selector.component';
 import { CredentialComponent } from '../shared/credential/credential.component';
 
 interface CredentialPositionData {
@@ -14,18 +17,31 @@ interface CredentialPositionData {
 @Component({
   selector: 'combi-credentials',
   standalone: true,
-  imports: [AsyncPipe, CredentialComponent, MatButtonModule, NgFor, NgIf],
+  imports: [
+    AsyncPipe,
+    CredentialComponent,
+    MatButtonModule,
+    NgFor,
+    NgIf,
+    RecordRoleSelectorComponent,
+  ],
   template: `
     <div class="header">
       <h1> Credentials </h1>
 
-      <button
-        *ngIf="records$ | async"
-        mat-raised-button
-        (click)="printCredentials()"
-      >
-        Download
-      </button>
+      <div class="header__actions">
+        <combi-record-role-selector
+          (selectRole)="filterByRole($event)"
+        ></combi-record-role-selector>
+
+        <button
+          *ngIf="records$ | async"
+          mat-raised-button
+          (click)="printCredentials()"
+        >
+          Download
+        </button>
+      </div>
     </div>
     <div *ngIf="records$ | async as records" class="credentials">
       <combi-credential
@@ -37,6 +53,12 @@ interface CredentialPositionData {
   `,
   styles: [
     `
+      .header__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
       .credentials {
         display: flex;
         flex-wrap: wrap;
@@ -51,7 +73,10 @@ export class CredentialsComponent {
     | undefined;
 
   private recordService = inject(RecordService);
-  records$ = this.recordService.getAllRecords();
+  private recordsSubject$ = new BehaviorSubject<RecordRole | string>('');
+  records$ = this.recordsSubject$.pipe(
+    switchMap((role) => this.recordService.getAllRecords(role)),
+  );
 
   private readonly HEIGHT = 10.96;
   private readonly WIDTH = 8;
@@ -86,6 +111,10 @@ export class CredentialsComponent {
       topPosition: this.HEIGHT * 2,
     },
   };
+
+  filterByRole(role: RecordRole | string): void {
+    this.recordsSubject$.next(role);
+  }
 
   printCredentials(): void {
     const pdf = new jsPDF({
@@ -124,6 +153,6 @@ export class CredentialsComponent {
       }
     });
 
-    pdf.save('wgj-credentials.pdf');
+    pdf.save('credentials.pdf');
   }
 }

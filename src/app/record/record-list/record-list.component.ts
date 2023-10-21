@@ -80,10 +80,18 @@ import { WASendFormComponent } from '../send-form/wa-send-form/wa-send-form.comp
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef> Actions </th>
         <td mat-cell *matCellDef="let element">
-          <button mat-icon-button (click)="openSendForm(element)">
+          <button
+            *ngIf="element.email.includes('@')"
+            mat-icon-button
+            (click)="openSendForm(element)"
+          >
             <mat-icon>send</mat-icon>
           </button>
-          <button mat-icon-button (click)="openWASendForm(element)">
+          <button
+            *ngIf="element.phone"
+            mat-icon-button
+            (click)="openWASendForm(element)"
+          >
             <mat-icon>sms</mat-icon>
           </button>
           <button mat-icon-button (click)="openRecordDetails(element)">
