@@ -40,7 +40,7 @@ export class RecordService {
   private db = inject(Firestore);
   private logger = inject(LoggerService);
 
-  private readonly COLLECTION_NAME = 'records-bwd';
+  private readonly COLLECTION_NAME = 'records-mt';
 
   getAllRecords(): Observable<CombiRecord[] | undefined> {
     this.loadingState.startLoading();

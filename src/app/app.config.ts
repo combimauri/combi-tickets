@@ -3,6 +3,7 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { provideAnalytics, getAnalytics } from '@angular/fire/analytics';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { getStorage, provideStorage } from '@angular/fire/storage';
 import {
   MAT_SNACK_BAR_DEFAULT_OPTIONS,
   MatSnackBarModule,
@@ -22,6 +23,7 @@ export const appConfig: ApplicationConfig = {
       provideAnalytics(() => getAnalytics()),
       provideAuth(() => getAuth()),
       provideFirestore(() => getFirestore()),
+      provideStorage(() => getStorage()),
       MatSnackBarModule,
     ),
     { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 5000 } },

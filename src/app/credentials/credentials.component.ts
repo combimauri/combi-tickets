@@ -54,8 +54,8 @@ export class CredentialsComponent {
   records$ = this.recordService.getAllRecords();
 
   private readonly HEIGHT = 10.96;
-  private readonly WIDTH = 7.76;
-  private readonly EXTRA_WIDTH = 7.82;
+  private readonly WIDTH = 8;
+  private readonly EXTRA_WIDTH = 8.06;
   private readonly JPEG = 'JPEG';
   private readonly CREDENTIALS_POSITION_DATA: Record<
     number,

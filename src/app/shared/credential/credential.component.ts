@@ -2,19 +2,34 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  EventEmitter,
   Input,
+  Output,
   ViewChild,
+  inject,
 } from '@angular/core';
+import {
+  Storage,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from '@angular/fire/storage';
 import { QRCodeComponent, QRCodeModule } from 'angularx-qrcode';
 
 import { CombiRecord, RecordRole } from '../../core/models/record.model';
+import { RecordService } from 'src/app/core/services/record.service';
 
 @Component({
   selector: 'combi-credential',
   standalone: true,
   imports: [QRCodeModule],
   template: `
-    <canvas #credentialCanvas [width]="WIDTH" [height]="HEIGHT"></canvas>
+    <canvas
+      #credentialCanvas
+      [width]="WIDTH"
+      [height]="HEIGHT"
+      style="max-width: 100%;"
+    ></canvas>
     <qrcode
       #qrCode
       elementType="img"
@@ -29,6 +44,7 @@ import { CombiRecord, RecordRole } from '../../core/models/record.model';
 })
 export class CredentialComponent {
   @Input({ required: true }) set record(record: CombiRecord | undefined) {
+    this._record = record;
     this.loadCredential(record);
   }
 
@@ -41,19 +57,60 @@ export class CredentialComponent {
   readonly HEIGHT = 542;
   readonly WIDTH = 400;
 
+  private _record?: CombiRecord;
+  private storage = inject(Storage);
+  private recordService = inject(RecordService);
+
   private readonly QR_TOP = 155;
   private readonly QR_LEFT = 100;
   private readonly NAME_TOP = 142;
   private readonly NAME_LEFT = this.WIDTH / 2;
   private readonly TEMPLATES: Record<RecordRole, string> = {
-    [RecordRole.Asistente]: 'assets/img/participant-bwd.png',
-    [RecordRole.Staff]: 'assets/img/staff-bwd.png',
-    [RecordRole.Speaker]: 'assets/img/speaker-bwd.png',
+    [RecordRole.Asistente]: 'assets/img/participant-mt.png',
+    [RecordRole.Staff]: 'assets/img/staff-mt.png',
+    [RecordRole.Speaker]: 'assets/img/speaker-mt.png',
   };
 
   @ViewChild('qrCode', { static: true }) private qrCode:
     | QRCodeComponent
     | undefined;
+
+  @Output() private saveInCloud = new EventEmitter<string>();
+  @Output() private credentialLoaded = new EventEmitter<void>();
+
+  print(): void {
+    if (!this._record) {
+      return;
+    }
+
+    const printButton = document.createElement('a');
+    printButton.download = this._record?.name;
+    printButton.href =
+      this.credentialCanvas?.nativeElement.toDataURL('image/png;base64');
+    printButton.click();
+  }
+
+  saveInStorage(): void {
+    if (!this._record) {
+      return;
+    }
+
+    this.credentialCanvas?.nativeElement.toBlob((file: Blob) => {
+      const storageRef = ref(this.storage, `mt/${this._record?.email}`);
+
+      uploadBytes(storageRef, file).then(async (snapshot) => {
+        const credentialUrl = await getDownloadURL(snapshot.ref);
+
+        this.saveInCloud.emit(credentialUrl);
+
+        if (!this._record) {
+          return;
+        }
+
+        this.recordService.updateRecord(this._record?.email, { credentialUrl });
+      });
+    });
+  }
 
   private loadCredential(record: CombiRecord | undefined): void {
     if (!record) {
@@ -103,5 +160,7 @@ export class CredentialComponent {
     // context.strokeText(record.role, this.NAME_LEFT, this.NAME_TOP + 24);
     context.strokeRect(0, 0, this.WIDTH, this.HEIGHT);
     context.drawImage(qrImage, this.QR_LEFT, this.QR_TOP);
+
+    this.credentialLoaded.emit();
   }
 }

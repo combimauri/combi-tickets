@@ -9,6 +9,7 @@ export interface CombiRecord {
   name: string;
   role: RecordRole;
   searchTerm: string;
+  credentialUrl?: string;
   [key: string]: unknown;
 }
 

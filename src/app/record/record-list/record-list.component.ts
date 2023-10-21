@@ -5,6 +5,8 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { Observable, Subject, map, shareReplay, switchMap } from 'rxjs';
 
 import { RecordDetailsComponent } from '../record-details/record-details.component';
@@ -18,13 +20,16 @@ import {
 } from '../../core/models/record.model';
 import { RecordService } from '../../core/services/record.service';
 import { SearchBoxComponent } from '../../shared/search-box/search-box.component';
+import { SendFormComponent } from '../send-form/send-form.component';
 
 @Component({
   selector: 'combi-record-list',
   standalone: true,
   imports: [
     AsyncPipe,
+    MatButtonModule,
     MatDialogModule,
+    MatIconModule,
     MatInputModule,
     MatPaginatorModule,
     MatTableModule,
@@ -71,12 +76,20 @@ import { SearchBoxComponent } from '../../shared/search-box/search-box.component
         </td>
       </ng-container>
 
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Actions </th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button (click)="openSendForm(element)">
+            <mat-icon>send</mat-icon>
+          </button>
+          <button mat-icon-button (click)="openRecordDetails(element)">
+            <mat-icon>visibility</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
       <tr mat-header-row *matHeaderRowDef="columns$ | async"></tr>
-      <tr
-        mat-row
-        *matRowDef="let row; columns: columns$ | async"
-        (click)="openRecordDetails(row)"
-      ></tr>
+      <tr mat-row *matRowDef="let row; columns: columns$ | async"></tr>
     </table>
 
     <mat-paginator
@@ -104,14 +117,6 @@ import { SearchBoxComponent } from '../../shared/search-box/search-box.component
       .mat-column-details small {
         display: block;
       }
-
-      .mat-mdc-row .mat-mdc-cell {
-        cursor: pointer;
-      }
-
-      .mat-mdc-row:hover {
-        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-      }
     `,
   ],
 })
@@ -130,7 +135,9 @@ export class RecordListComponent implements AfterViewInit {
   );
   columns$ = this.isHandset$.pipe(
     map((isHandset) =>
-      isHandset ? ['position', 'details'] : ['position', 'details', 'role'],
+      isHandset
+        ? ['position', 'details', 'actions']
+        : ['position', 'details', 'role', 'actions'],
     ),
   );
 
@@ -149,6 +156,10 @@ export class RecordListComponent implements AfterViewInit {
 
   openRecordDetails(data: CombiRecord): void {
     this.dialog.open(RecordDetailsComponent, { data });
+  }
+
+  openSendForm(data: CombiRecord): void {
+    this.dialog.open(SendFormComponent, { data });
   }
 
   filterByRole(role: RecordRole | string): void {

@@ -9,19 +9,20 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { QRCodeModule } from 'angularx-qrcode';
 import { Subject, switchMap } from 'rxjs';
 
 import { CombiRecord } from '../../core/models/record.model';
 import { RecordService } from '../../core/services/record.service';
 import { RegistryService } from '../../core/services/registry.service';
 import { LoadingState } from '../../core/states/loading.state';
+import { CredentialComponent } from '../../shared/credential/credential.component';
 
 @Component({
   selector: 'combi-record-details',
   standalone: true,
   imports: [
     AsyncPipe,
+    CredentialComponent,
     KeyValuePipe,
     MatButtonModule,
     MatCardModule,
@@ -30,7 +31,6 @@ import { LoadingState } from '../../core/states/loading.state';
     MatExpansionModule,
     NgIf,
     NgFor,
-    QRCodeModule,
   ],
   template: `
     <ng-container *ngIf="recordUpdate$ | async"></ng-container>
@@ -66,12 +66,7 @@ import { LoadingState } from '../../core/states/loading.state';
           </mat-expansion-panel-header>
 
           <div class="code__container">
-            <qrcode
-              elementType="img"
-              errorCorrectionLevel="M"
-              [qrdata]="record.email"
-              [width]="256"
-            ></qrcode>
+            <combi-credential #credential [record]="record"></combi-credential>
           </div>
 
           <p *ngFor="let item of record | keyvalue">
@@ -81,7 +76,15 @@ import { LoadingState } from '../../core/states/loading.state';
       </mat-accordion>
     </div>
 
-    <div mat-dialog-actions>
+    <div mat-dialog-actions class="actions-container">
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="loading"
+        (click)="credential.saveInStorage()"
+      >
+        Download Credential
+      </button>
       <button mat-button cdkFocusInitial (click)="close()"> Ok </button>
     </div>
   `,
@@ -96,6 +99,12 @@ import { LoadingState } from '../../core/states/loading.state';
       .code__container {
         text-align: center;
         width: 100%;
+      }
+
+      .actions-container {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
       }
     `,
   ],
