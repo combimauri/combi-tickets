@@ -36,25 +36,29 @@ import { RecordDetailsComponent } from '../record-details/record-details.compone
       ></combi-credential>
 
       <form
-        action="https://script.google.com/macros/s/AKfycbzOL4R-mlgaD4nu2RkjBWfCrRjfrIPxl6lO2fjat9cXdn60OpxK7LewaSJOZhe3K9RpLg/exec"
+        action="https://script.google.com/macros/s/AKfycbxxG_Xl9n60YF6LBOHQfxwRGjNzayHOrEguGFojw6Tf-2n18bQOV1U04Ezl267HHUIqWA/exec"
         class="send-form"
         method="post"
         target="_blank"
       >
-        <mat-form-field class="hidden">
-          <mat-label>Name</mat-label>
-          <input matInput name="remitente" type="text" [value]="name" />
-        </mat-form-field>
+        <input class="hidden" name="remitente" type="text" [value]="name" />
 
-        <mat-form-field class="hidden">
-          <mat-label>Email</mat-label>
-          <input
-            matInput
-            name="formGoogleSendEmail"
-            type="email"
-            [value]="record.email"
-          />
-        </mat-form-field>
+        <input
+          matInput
+          class="hidden"
+          name="formGoogleSendEmail"
+          type="email"
+          [value]="record.email"
+        />
+
+        <input
+          class="hidden"
+          name="email"
+          type="email"
+          [value]="record.email"
+        />
+
+        <input class="hidden" name="nombre" type="text" [value]="record.name" />
 
         <mat-form-field>
           <mat-label>Message</mat-label>
