@@ -144,7 +144,7 @@ export class ScannerComponent {
   private dialog = inject(MatDialog);
   private destroyRef = inject(DestroyRef);
 
-  setSelectedRegistry(registry: Registry): void {
+  setSelectedRegistry(registry: Registry | undefined): void {
     this.selectedRegistry = registry;
   }
 

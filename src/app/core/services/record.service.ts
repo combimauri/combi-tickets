@@ -33,6 +33,7 @@ import {
 import { LoggerService } from './logger.service';
 import { CombiRecord, RecordListing, RecordRole } from '../models/record.model';
 import { LoadingState } from '../states/loading.state';
+import { Registry } from '../models/registry.model';
 
 @Injectable({ providedIn: 'root' })
 export class RecordService {
@@ -75,18 +76,20 @@ export class RecordService {
   getFirstPageOfRecords(
     pageSize: number,
     roleFilter: RecordRole | string,
+    registryFilter: Registry | undefined,
     searchTerm: string,
   ): Observable<RecordListing | undefined> {
     this.loadingState.startLoading();
 
     let dbQuery = query(collection(this.db, this.COLLECTION_NAME));
     dbQuery = this.addRoleFilterToQuery(dbQuery, roleFilter);
+    dbQuery = this.addRegistryFilterToQuery(dbQuery, registryFilter);
     dbQuery = this.addSearchTermToQuery(dbQuery, searchTerm);
     dbQuery = query(dbQuery, orderBy('searchTerm'), limit(pageSize));
 
     return (collectionData(dbQuery) as Observable<CombiRecord[]>).pipe(
       switchMap((items) =>
-        this.getRecordsCount(roleFilter, searchTerm).pipe(
+        this.getRecordsCount(roleFilter, registryFilter, searchTerm).pipe(
           map((total) => ({ items, total })),
         ),
       ),
@@ -100,12 +103,14 @@ export class RecordService {
     lastVisibleRecord: CombiRecord,
     pageSize: number,
     roleFilter: RecordRole | string,
+    registryFilter: Registry | undefined,
     searchTerm: string,
   ): Observable<RecordListing | undefined> {
     this.loadingState.startLoading();
 
     let dbQuery = query(collection(this.db, this.COLLECTION_NAME));
     dbQuery = this.addRoleFilterToQuery(dbQuery, roleFilter);
+    dbQuery = this.addRegistryFilterToQuery(dbQuery, registryFilter);
     dbQuery = this.addSearchTermToQuery(dbQuery, searchTerm);
     dbQuery = query(
       dbQuery,
@@ -116,7 +121,7 @@ export class RecordService {
 
     return (collectionData(dbQuery) as Observable<CombiRecord[]>).pipe(
       switchMap((items) =>
-        this.getRecordsCount(roleFilter, searchTerm).pipe(
+        this.getRecordsCount(roleFilter, registryFilter, searchTerm).pipe(
           map((total) => ({ items, total })),
         ),
       ),
@@ -130,12 +135,14 @@ export class RecordService {
     lastVisibleRecord: CombiRecord,
     pageSize: number,
     roleFilter: RecordRole | string,
+    registryFilter: Registry | undefined,
     searchTerm: string,
   ): Observable<RecordListing | undefined> {
     this.loadingState.startLoading();
 
     let dbQuery = query(collection(this.db, this.COLLECTION_NAME));
     dbQuery = this.addRoleFilterToQuery(dbQuery, roleFilter);
+    dbQuery = this.addRegistryFilterToQuery(dbQuery, registryFilter);
     dbQuery = this.addSearchTermToQuery(dbQuery, searchTerm);
     dbQuery = query(
       dbQuery,
@@ -146,7 +153,7 @@ export class RecordService {
 
     return (collectionData(dbQuery) as Observable<CombiRecord[]>).pipe(
       switchMap((items) =>
-        this.getRecordsCount(roleFilter, searchTerm).pipe(
+        this.getRecordsCount(roleFilter, registryFilter, searchTerm).pipe(
           map((total) => ({ items, total })),
         ),
       ),
@@ -215,6 +222,17 @@ export class RecordService {
     return query(dbQuery, where('role', '==', roleFilter));
   }
 
+  private addRegistryFilterToQuery(
+    dbQuery: Query<DocumentData>,
+    registry: Registry | undefined,
+  ): Query<DocumentData> {
+    if (!registry) {
+      return dbQuery;
+    }
+
+    return query(dbQuery, where(registry.id, '==', true));
+  }
+
   private addSearchTermToQuery(
     dbQuery: Query<DocumentData>,
     searchTerm: string,
@@ -232,10 +250,12 @@ export class RecordService {
 
   private getRecordsCount(
     roleFilter: RecordRole | string,
+    registryFilter: Registry | undefined,
     searchTerm: string,
   ): Observable<number> {
     let dbQuery = query(collection(this.db, this.COLLECTION_NAME));
     dbQuery = this.addRoleFilterToQuery(dbQuery, roleFilter);
+    dbQuery = this.addRegistryFilterToQuery(dbQuery, registryFilter);
     dbQuery = this.addSearchTermToQuery(dbQuery, searchTerm);
 
     return from(getCountFromServer(dbQuery)).pipe(

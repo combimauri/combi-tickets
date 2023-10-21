@@ -23,6 +23,9 @@ import { RecordService } from '../../core/services/record.service';
 import { SearchBoxComponent } from '../../shared/search-box/search-box.component';
 import { SendFormComponent } from '../send-form/send-form.component';
 import { WASendFormComponent } from '../send-form/wa-send-form/wa-send-form.component';
+import { ScannerRegistrySelectorComponent } from '../../scanner/scanner-registry-selector/scanner-registry-selector.component';
+import { Registry } from '../../core/models/registry.model';
+import { RegistryService } from '../../core/services/registry.service';
 
 @Component({
   selector: 'combi-record-list',
@@ -38,6 +41,7 @@ import { WASendFormComponent } from '../send-form/wa-send-form/wa-send-form.comp
     MatTooltipModule,
     NgIf,
     RecordRoleSelectorComponent,
+    ScannerRegistrySelectorComponent,
     SearchBoxComponent,
   ],
   template: `
@@ -48,6 +52,11 @@ import { WASendFormComponent } from '../send-form/wa-send-form/wa-send-form.comp
         <combi-record-role-selector
           (selectRole)="filterByRole($event)"
         ></combi-record-role-selector>
+
+        <combi-scanner-registry-selector
+          [registries]="registries$ | async"
+          (selectRegistry)="setSelectedRegistry($event)"
+        ></combi-scanner-registry-selector>
 
         <combi-search-box (search)="searchRecord($event)"></combi-search-box>
       </div>
@@ -145,6 +154,9 @@ export class RecordListComponent implements AfterViewInit {
   total = 0;
   pageIndex = 0;
 
+  registries$ = inject(RegistryService).getRegistries();
+  selectedRegistry: Registry | undefined;
+
   private searchTerm = '';
   private selectedRole: RecordRole | string = '';
 
@@ -188,6 +200,12 @@ export class RecordListComponent implements AfterViewInit {
 
   filterByRole(role: RecordRole | string): void {
     this.selectedRole = role;
+
+    this.resetTable();
+  }
+
+  setSelectedRegistry(registry: Registry | undefined): void {
+    this.selectedRegistry = registry;
 
     this.resetTable();
   }
@@ -237,6 +255,7 @@ export class RecordListComponent implements AfterViewInit {
           lastRecord,
           this.pageSize,
           this.selectedRole,
+          this.selectedRegistry,
           this.searchTerm,
         )
         .pipe(map((listing) => this.handleLoadRecordListing(listing)));
@@ -246,13 +265,19 @@ export class RecordListComponent implements AfterViewInit {
           firstRecord,
           this.pageSize,
           this.selectedRole,
+          this.selectedRegistry,
           this.searchTerm,
         )
         .pipe(map((listing) => this.handleLoadRecordListing(listing)));
     }
 
     return this.recordService
-      .getFirstPageOfRecords(this.pageSize, this.selectedRole, this.searchTerm)
+      .getFirstPageOfRecords(
+        this.pageSize,
+        this.selectedRole,
+        this.selectedRegistry,
+        this.searchTerm,
+      )
       .pipe(map((listing) => this.handleLoadRecordListing(listing)));
   }
 

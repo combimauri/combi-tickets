@@ -16,6 +16,9 @@ import { Registry } from '../../core/models/registry.model';
         [(value)]="selectedRegistry"
         (valueChange)="selectRegistry.emit(selectedRegistry)"
       >
+        <mat-option style="font-style: italic;" [value]="undefined">
+          None
+        </mat-option>
         <ng-container *ngIf="registries">
           <mat-option
             *ngFor="let registry of registries; index as i"
@@ -31,7 +34,7 @@ import { Registry } from '../../core/models/registry.model';
 export class ScannerRegistrySelectorComponent {
   @Input() registries: Registry[] | null | undefined;
 
-  @Output() selectRegistry = new EventEmitter<Registry>();
+  @Output() selectRegistry = new EventEmitter<Registry | undefined>();
 
   selectedRegistry: Registry | undefined;
 }
