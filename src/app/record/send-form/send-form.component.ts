@@ -36,7 +36,7 @@ import { RecordDetailsComponent } from '../record-details/record-details.compone
       ></combi-credential>
 
       <form
-        action="https://script.google.com/macros/s/AKfycbxxG_Xl9n60YF6LBOHQfxwRGjNzayHOrEguGFojw6Tf-2n18bQOV1U04Ezl267HHUIqWA/exec"
+        action="https://script.google.com/macros/s/AKfycbwWEcJRC8q1IF4vnjHyrtzW0dE4vCx4faX7ysNZqlkbNcIJ5c3xK9hACoSaLNXmh12Mbw/exec"
         class="send-form"
         method="post"
         target="_blank"

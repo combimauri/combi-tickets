@@ -74,17 +74,15 @@ export class ScannerComponent {
     switchMap((email) => this.recordService.getRecordByEmail(email)),
     switchMap((record) => {
       if (record && this.selectedRegistry) {
-        if (record['emiStudent'] === 'Si') {
-          return of('EMI student.');
-        }
-
         if (record[this.selectedRegistry.id]) {
           return of('The record was already registered.');
         }
 
         const data = { [this.selectedRegistry.id]: true };
 
-        return this.recordService.updateRecord(record.email, data);
+        return this.recordService
+          .updateRecord(record.email, data)
+          .pipe(tap((record) => this.updateRegistries(record)));
       }
 
       return of(undefined);
@@ -122,5 +120,11 @@ export class ScannerComponent {
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => (this.scannedEmail = ''));
+  }
+
+  private updateRegistries(record: Partial<CombiRecord> | undefined): void {
+    if (this.selectedRegistry?.main) {
+      console.log('updateRegistries', record);
+    }
   }
 }
