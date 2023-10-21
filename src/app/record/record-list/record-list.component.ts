@@ -21,6 +21,7 @@ import {
 import { RecordService } from '../../core/services/record.service';
 import { SearchBoxComponent } from '../../shared/search-box/search-box.component';
 import { SendFormComponent } from '../send-form/send-form.component';
+import { WASendFormComponent } from '../send-form/wa-send-form/wa-send-form.component';
 
 @Component({
   selector: 'combi-record-list',
@@ -81,6 +82,9 @@ import { SendFormComponent } from '../send-form/send-form.component';
         <td mat-cell *matCellDef="let element">
           <button mat-icon-button (click)="openSendForm(element)">
             <mat-icon>send</mat-icon>
+          </button>
+          <button mat-icon-button (click)="openWASendForm(element)">
+            <mat-icon>sms</mat-icon>
           </button>
           <button mat-icon-button (click)="openRecordDetails(element)">
             <mat-icon>visibility</mat-icon>
@@ -160,6 +164,10 @@ export class RecordListComponent implements AfterViewInit {
 
   openSendForm(data: CombiRecord): void {
     this.dialog.open(SendFormComponent, { data });
+  }
+
+  openWASendForm(data: CombiRecord): void {
+    this.dialog.open(WASendFormComponent, { data });
   }
 
   filterByRole(role: RecordRole | string): void {
