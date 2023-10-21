@@ -1,5 +1,5 @@
 import { Component, ViewChild, inject } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -18,6 +18,7 @@ import { RecordDetailsComponent } from '../../record-details/record-details.comp
   standalone: true,
   imports: [
     CredentialComponent,
+    FormsModule,
     MatButtonModule,
     MatDialogModule,
     MatInputModule,
@@ -42,7 +43,7 @@ import { RecordDetailsComponent } from '../../record-details/record-details.comp
           name="mensaje"
           type="text"
           rows="5"
-          [value]="message"
+          [(ngModel)]="message"
           [disabled]="!message"
         >
         </textarea>
