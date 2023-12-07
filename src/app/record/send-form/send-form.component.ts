@@ -36,7 +36,7 @@ import { RecordDetailsComponent } from '../record-details/record-details.compone
       ></combi-credential>
 
       <form
-        action="https://script.google.com/macros/s/AKfycbwWEcJRC8q1IF4vnjHyrtzW0dE4vCx4faX7ysNZqlkbNcIJ5c3xK9hACoSaLNXmh12Mbw/exec"
+        action="https://script.google.com/macros/s/AKfycbwhVJFMNVUu7vY4k9tSIXYj40QOKXVQ6nifYtkGTMcSse9Ffu1EP_0gkIPZk_EWpWR4/exec"
         class="send-form"
         method="post"
         target="_blank"
@@ -106,7 +106,7 @@ import { RecordDetailsComponent } from '../record-details/record-details.compone
   ],
 })
 export class SendFormComponent {
-  name = 'Women Techmakers Cochabamba';
+  name = 'Notion Bolivia';
   message = '';
 
   loading = inject(LoadingState).loading;
@@ -126,12 +126,12 @@ export class SendFormComponent {
     }
 
     if (credentialUrl) {
-      this.message = `Hola ${this.record.name}, tu credencial para el evento "Junt@s en Comunidad" es: ${credentialUrl} ¡Nos vemos ahí!`;
+      this.message = `Hola ${this.record.name}, tu credencial para el evento "Notion Bolivia Summit 2023" es: ${credentialUrl} ¡Nos vemos ahí!`;
       return;
     }
 
     if (this.record.credentialUrl) {
-      this.message = `Hola ${this.record.name}, tu credencial para el evento "Junt@s en Comunidad" es: ${this.record.credentialUrl} ¡Nos vemos ahí!`;
+      this.message = `Hola ${this.record.name}, tu credencial para el evento "Notion Bolivia Summit 2023" es: ${this.record.credentialUrl} ¡Nos vemos ahí!`;
     } else {
       this.credential?.saveInStorage();
     }
