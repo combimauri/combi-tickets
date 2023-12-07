@@ -41,7 +41,7 @@ export class RecordService {
   private db = inject(Firestore);
   private logger = inject(LoggerService);
 
-  private readonly COLLECTION_NAME = 'records-mt';
+  private readonly COLLECTION_NAME = 'records-notion';
 
   getAllRecords(
     roleFilter: RecordRole | string,

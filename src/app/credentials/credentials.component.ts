@@ -37,6 +37,7 @@ interface CredentialPositionData {
         <button
           *ngIf="records$ | async"
           mat-raised-button
+          class="big-button"
           (click)="printCredentials()"
         >
           Download

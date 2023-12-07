@@ -61,14 +61,14 @@ export class CredentialComponent {
   private storage = inject(Storage);
   private recordService = inject(RecordService);
 
-  private readonly QR_TOP = 155;
+  private readonly QR_TOP = 180;
   private readonly QR_LEFT = 100;
-  private readonly NAME_TOP = 142;
+  private readonly NAME_TOP = 150;
   private readonly NAME_LEFT = this.WIDTH / 2;
   private readonly TEMPLATES: Record<RecordRole, string> = {
-    [RecordRole.Asistente]: 'assets/img/participant-mt.png',
-    [RecordRole.Staff]: 'assets/img/staff-mt.png',
-    [RecordRole.Speaker]: 'assets/img/speaker-mt.png',
+    [RecordRole.Asistente]: 'assets/img/participant-notion.png',
+    [RecordRole.Staff]: 'assets/img/staff-notion.png',
+    [RecordRole.Speaker]: 'assets/img/speaker-notion.png',
   };
 
   @ViewChild('qrCode', { static: true }) private qrCode:
