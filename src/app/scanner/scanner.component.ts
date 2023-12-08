@@ -103,6 +103,8 @@ export class ScannerComponent {
           data = { ...data, mainRegistryDate: new Date() };
         }
 
+        data = { ...record, ...data };
+
         return this.recordService.updateRecord(record.email, data);
       }
 
