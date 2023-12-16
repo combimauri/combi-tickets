@@ -36,7 +36,7 @@ import { RecordDetailsComponent } from '../record-details/record-details.compone
       ></combi-credential>
 
       <form
-        action="https://script.google.com/macros/s/AKfycbwhVJFMNVUu7vY4k9tSIXYj40QOKXVQ6nifYtkGTMcSse9Ffu1EP_0gkIPZk_EWpWR4/exec"
+        action="https://script.google.com/macros/s/AKfycbz-cMhvR8YntGD1emNLWF-RkZli_mqalhYYE-IklJQRaVi0fJYdHnfmZu0QnCaTf5uzwg/exec"
         class="send-form"
         method="post"
         target="_blank"
@@ -106,7 +106,7 @@ import { RecordDetailsComponent } from '../record-details/record-details.compone
   ],
 })
 export class SendFormComponent {
-  name = 'Notion Bolivia';
+  name = 'GDG Cochabamba';
   message = '';
 
   loading = inject(LoadingState).loading;
@@ -126,12 +126,12 @@ export class SendFormComponent {
     }
 
     if (credentialUrl) {
-      this.message = `Hola ${this.record.name}, tu credencial para el evento "Notion Bolivia Summit 2023" es: ${credentialUrl} ¡Nos vemos ahí!`;
+      this.message = `Hola ${this.record.name}, tu credencial para el evento "DevFest Cochabamba 2023" es: ${credentialUrl} ¡Nos vemos ahí!`;
       return;
     }
 
     if (this.record.credentialUrl) {
-      this.message = `Hola ${this.record.name}, tu credencial para el evento "Notion Bolivia Summit 2023" es: ${this.record.credentialUrl} ¡Nos vemos ahí!`;
+      this.message = `Hola ${this.record.name}, tu credencial para el evento "DevFest Cochabamba 2023" es: ${this.record.credentialUrl} ¡Nos vemos ahí!`;
     } else {
       this.credential?.saveInStorage();
     }

@@ -7,6 +7,7 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatIconModule } from '@angular/material/icon';
 
 import { CombiRecord } from '../../core/models/record.model';
 
@@ -18,6 +19,7 @@ import { CombiRecord } from '../../core/models/record.model';
     MatButtonModule,
     MatDialogModule,
     MatExpansionModule,
+    MatIconModule,
     NgFor,
     NgIf,
   ],
@@ -26,10 +28,14 @@ import { CombiRecord } from '../../core/models/record.model';
     <div mat-dialog-content>
       <ng-container *ngIf="recordAsAny; else noRecord">
         <div>
-          <p> <b> Nombre: </b> {{ recordAsAny.name }} </p>
-          <p> <b> Paquete: </b> {{ recordAsAny.paquetes }} </p>
-          <p>
-            <b> Polera: </b> {{ recordAsAny.poleras || 'NO CORRESPONDE' }}
+          <p> <b> NAME: </b> {{ recordAsAny.name }} </p>
+          <p *ngIf="recordAsAny.notes">
+            <b
+              style="color: #ffba23; display: flex; justify-content: center; align-items: center"
+            >
+              <mat-icon>warning</mat-icon> NOTES:
+            </b>
+            {{ recordAsAny.notes }}
           </p>
         </div>
 

@@ -87,7 +87,7 @@ import { RecordDetailsComponent } from '../../record-details/record-details.comp
   ],
 })
 export class WASendFormComponent {
-  name = 'Women Techmakers Cochabamba';
+  name = 'GDG Cochabamba';
   message = '';
 
   loading = inject(LoadingState).loading;
@@ -107,12 +107,12 @@ export class WASendFormComponent {
     }
 
     if (credentialUrl) {
-      this.message = `Hola ${this.record.name}, tu credencial para el evento "Notion Bolivia Summit 2023" es: ${credentialUrl} ¡Nos vemos ahí!`;
+      this.message = `Hola ${this.record.name}, tu credencial para el evento "DevFest Cochabamba 2023" es: ${credentialUrl} ¡Nos vemos ahí!`;
       return;
     }
 
     if (this.record.credentialUrl) {
-      this.message = `Hola ${this.record.name}, tu credencial para el evento "Notion Bolivia Summit 2023" es: ${this.record.credentialUrl} ¡Nos vemos ahí!`;
+      this.message = `Hola ${this.record.name}, tu credencial para el evento "DevFest Cochabamba 2023" es: ${this.record.credentialUrl} ¡Nos vemos ahí!`;
     } else {
       this.credential?.saveInStorage();
     }
@@ -123,7 +123,7 @@ export class WASendFormComponent {
       return;
     }
 
-    const whatsappLink = `https://api.whatsapp.com/send?phone=591${
+    const whatsappLink = `https://api.whatsapp.com/send?phone=${
       this.record['phone']
     }&text=${encodeURI(this.message)}`;
 
