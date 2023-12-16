@@ -4,4 +4,7 @@ export interface Registry {
   main?: boolean;
   limit?: number;
   records?: string[];
+  protected?: boolean;
+  multi?: boolean;
+  requiresId?: boolean;
 }
