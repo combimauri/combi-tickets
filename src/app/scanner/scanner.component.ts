@@ -140,7 +140,7 @@ export class ScannerComponent {
         }
 
         if (this.selectedRegistry.requiresId) {
-          const rfids = (data['rfidNumbers'] as unknown[]) || [];
+          const rfids = (data['rfidNumbers'] as any[]) || [];
 
           data = {
             ...data,

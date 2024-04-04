@@ -66,9 +66,9 @@ export class CredentialComponent {
   private readonly NAME_TOP = 150;
   private readonly NAME_LEFT = this.WIDTH / 2;
   private readonly TEMPLATES: Record<RecordRole, string> = {
-    [RecordRole.Asistente]: 'assets/img/participant-df.png',
-    [RecordRole.Staff]: 'assets/img/staff-df.png',
-    [RecordRole.Speaker]: 'assets/img/speaker-df.png',
+    [RecordRole.Asistente]: 'assets/img/participant-ng-she.png',
+    [RecordRole.Staff]: 'assets/img/staff-ng-she.png',
+    [RecordRole.Speaker]: 'assets/img/speaker-ng-she.png',
   };
 
   @ViewChild('qrCode', { static: true }) private qrCode:

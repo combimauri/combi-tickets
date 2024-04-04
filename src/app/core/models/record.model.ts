@@ -10,6 +10,7 @@ export interface CombiRecord {
   role: RecordRole;
   searchTerm: string;
   credentialUrl?: string;
+  rfidNumbers?: any[];
   [key: string]: unknown;
 }
 
