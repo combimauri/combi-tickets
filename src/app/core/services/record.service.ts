@@ -41,7 +41,7 @@ export class RecordService {
   private db = inject(Firestore);
   private logger = inject(LoggerService);
 
-  private readonly COLLECTION_NAME = 'records-ng-she';
+  private readonly COLLECTION_NAME = 'records-iwd';
 
   getAllRecords(
     roleFilter: RecordRole | string,

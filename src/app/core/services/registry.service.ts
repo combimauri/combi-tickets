@@ -1,5 +1,11 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collection, collectionData } from '@angular/fire/firestore';
+import {
+  Firestore,
+  collection,
+  collectionData,
+  query,
+  where,
+} from '@angular/fire/firestore';
 import { Observable, catchError, finalize, of, tap } from 'rxjs';
 
 import { LoggerService } from './logger.service';
@@ -15,11 +21,12 @@ export class RegistryService {
   getRegistries(): Observable<Registry[] | undefined> {
     this.loadingState.startLoading();
 
-    return (
-      collectionData(collection(this.db, 'registries')) as Observable<
-        Registry[]
-      >
-    ).pipe(
+    const dbQuery = query(
+      collection(this.db, 'registries'),
+      where('deleted', '==', false),
+    );
+
+    return (collectionData(dbQuery) as Observable<Registry[]>).pipe(
       catchError((error) => this.handleErrorGettingRegistry(error)),
       tap(() => this.loadingState.stopLoading()),
       finalize(() => this.loadingState.stopLoading()),

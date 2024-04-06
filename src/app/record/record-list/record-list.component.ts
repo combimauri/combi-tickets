@@ -91,14 +91,14 @@ import { RegistryService } from '../../core/services/registry.service';
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef> Actions </th>
         <td mat-cell *matCellDef="let element">
-          <button
+          <!-- <button
             *ngIf="element.email.includes('@')"
             mat-icon-button
             matTooltip="Send Email"
             (click)="openSendForm(element)"
           >
             <mat-icon>send</mat-icon>
-          </button>
+          </button> -->
           <button
             *ngIf="element.phone"
             mat-icon-button
@@ -127,7 +127,7 @@ import { RegistryService } from '../../core/services/registry.service';
       [length]="total"
       [pageIndex]="pageIndex"
       [pageSize]="pageSize"
-      [pageSizeOptions]="[5, 10, 15, 20, 50, 100]"
+      [pageSizeOptions]="[1, 5, 10, 15, 20, 50, 100]"
       (page)="
         handlePaginationChange($event, records[0], records[records.length - 1])
       "
