@@ -1,19 +1,20 @@
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
-import { Subject, of, switchMap, take, tap } from 'rxjs';
+import { Subject, of, switchMap, tap } from 'rxjs';
 
 import { ScannerDialogComponent } from './scanner-dialog/scanner-dialog.component';
 import { ScannerRegistrySelectorComponent } from './scanner-registry-selector/scanner-registry-selector.component';
 import { CombiRecord } from '../core/models/record.model';
 import { Registry } from '../core/models/registry.model';
+import { LastScanState } from '../core/services/last-scan.state';
 import { RecordService } from '../core/services/record.service';
 import { RegistryService } from '../core/services/registry.service';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'combi-scanner',
@@ -104,14 +105,15 @@ import { FormsModule } from '@angular/forms';
   ],
 })
 export class ScannerComponent {
+  private lastScanState = inject(LastScanState);
   private recordService = inject(RecordService);
   private recordSubject$ = new Subject<string>();
   record$ = this.recordSubject$.pipe(
     switchMap((id) => this.recordService.getRecordById(id)),
     switchMap((record) => {
       if (record && this.selectedRegistry) {
-        console.log(record);
-        console.log(this.selectedRegistry);
+        this.lastScanState.setLastScan(record);
+
         if (this.selectedRegistry.protected && !record['protectedAccess']) {
           return of('User has no access.');
         }

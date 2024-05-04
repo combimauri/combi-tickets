@@ -1,4 +1,10 @@
-import { KeyValuePipe, NgFor, NgIf } from '@angular/common';
+import {
+  AsyncPipe,
+  KeyValuePipe,
+  NgFor,
+  NgIf,
+  NgTemplateOutlet,
+} from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -10,11 +16,13 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 
 import { CombiRecord } from '../../core/models/record.model';
+import { LastScanState } from '../../core/services/last-scan.state';
 
 @Component({
   selector: 'combi-scanner-dialog',
   standalone: true,
   imports: [
+    AsyncPipe,
     KeyValuePipe,
     MatButtonModule,
     MatDialogModule,
@@ -22,6 +30,7 @@ import { CombiRecord } from '../../core/models/record.model';
     MatIconModule,
     NgFor,
     NgIf,
+    NgTemplateOutlet,
   ],
   template: `
     <h1 mat-dialog-title> Scanner Result </h1>
@@ -39,17 +48,7 @@ import { CombiRecord } from '../../core/models/record.model';
           </p>
         </div>
 
-        <mat-accordion>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title> Record Data </mat-panel-title>
-            </mat-expansion-panel-header>
-
-            <p *ngFor="let item of record | keyvalue">
-              <b> {{ item.key }}: </b> {{ item.value }}
-            </p>
-          </mat-expansion-panel>
-        </mat-accordion>
+        <ng-template [ngTemplateOutlet]="recordData"></ng-template>
 
         <img src="assets/img/success.png" alt="Success icon" />
       </ng-container>
@@ -57,12 +56,28 @@ import { CombiRecord } from '../../core/models/record.model';
       <ng-template #noRecord>
         {{ errorMessage }}
 
+        <ng-template [ngTemplateOutlet]="recordData"></ng-template>
+
         <img src="assets/img/error.png" alt="Error icon" />
       </ng-template>
     </div>
     <div mat-dialog-actions>
       <button mat-button cdkFocusInitial (click)="close()"> Ok </button>
     </div>
+
+    <ng-template #recordData let-recordState>
+      <mat-accordion *ngIf="lastScan$ | async as recordState">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title> Record Data </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <p *ngFor="let item of recordState | keyvalue">
+            <b> {{ item.key }}: </b> {{ item.value }}
+          </p>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </ng-template>
   `,
   styles: [
     `
@@ -77,6 +92,8 @@ import { CombiRecord } from '../../core/models/record.model';
 })
 export class ScannerDialogComponent implements OnInit {
   record: Partial<CombiRecord> | string | undefined = inject(MAT_DIALOG_DATA);
+
+  lastScan$ = inject(LastScanState).getLastScan();
 
   errorMessage = 'Error updating record.';
 
