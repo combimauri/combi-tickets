@@ -155,7 +155,7 @@ export class RecordListComponent implements AfterViewInit {
   pageIndex = 0;
 
   registries$ = inject(RegistryService).getRegistries();
-  selectedRegistry: Registry | undefined;
+  selectedRegistry?: Registry;
 
   private searchTerm = '';
   private selectedRole: RecordRole | string = '';

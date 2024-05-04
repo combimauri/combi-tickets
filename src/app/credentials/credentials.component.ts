@@ -69,9 +69,8 @@ interface CredentialPositionData {
   ],
 })
 export class CredentialsComponent {
-  @ViewChildren('credentials') private credentials:
-    | QueryList<CredentialComponent>
-    | undefined;
+  @ViewChildren('credentials')
+  private credentials?: QueryList<CredentialComponent>;
 
   private recordService = inject(RecordService);
   private recordsSubject$ = new BehaviorSubject<RecordRole | string>('');

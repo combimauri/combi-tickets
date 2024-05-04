@@ -36,7 +36,7 @@ import { RecordService } from 'src/app/core/services/record.service';
       errorCorrectionLevel="M"
       hidden
       [margin]="0"
-      [qrdata]="recordEmail"
+      [qrdata]="recordCode"
       [width]="200"
     ></qrcode>
   `,
@@ -48,11 +48,10 @@ export class CredentialComponent {
     this.loadCredential(record);
   }
 
-  @ViewChild('credentialCanvas', { static: true }) credentialCanvas:
-    | ElementRef
-    | undefined;
+  @ViewChild('credentialCanvas', { static: true })
+  credentialCanvas?: ElementRef;
 
-  recordEmail = '';
+  recordCode = '';
 
   readonly HEIGHT = 542;
   readonly WIDTH = 400;
@@ -61,20 +60,17 @@ export class CredentialComponent {
   private storage = inject(Storage);
   private recordService = inject(RecordService);
 
-  private readonly QR_TOP = 180;
+  private readonly QR_TOP = 224;
   private readonly QR_LEFT = 100;
-  private readonly NAME_TOP = 150;
+  private readonly NAME_TOP = 512;
   private readonly NAME_LEFT = this.WIDTH / 2;
   private readonly TEMPLATES: Record<RecordRole, string> = {
-    [RecordRole.Asistente]: 'assets/img/participant-iwd.png',
-    [RecordRole.Staff]: 'assets/img/staff-iwd.png',
-    [RecordRole.Speaker]: 'assets/img/speaker-iwd.png',
-    [RecordRole.Sponsor]: 'assets/img/sponsor-iwd.png',
+    [RecordRole.Asistente]: 'assets/img/participante-ia.png',
+    [RecordRole.Staff]: 'assets/img/staff-ia.png',
+    [RecordRole.Mentor]: 'assets/img/mentor-ia.png',
   };
 
-  @ViewChild('qrCode', { static: true }) private qrCode:
-    | QRCodeComponent
-    | undefined;
+  @ViewChild('qrCode', { static: true }) private qrCode?: QRCodeComponent;
 
   @Output() private saveInCloud = new EventEmitter<string>();
   @Output() private credentialLoaded = new EventEmitter<void>();
@@ -118,7 +114,7 @@ export class CredentialComponent {
       return;
     }
 
-    this.recordEmail = record.email;
+    this.recordCode = record['id'] as string;
     const templateImage = new Image();
     templateImage.src =
       this.TEMPLATES[record.role] || this.TEMPLATES[RecordRole.Asistente];
@@ -152,16 +148,29 @@ export class CredentialComponent {
       return;
     }
 
-    context.font = '20px Roboto';
-    context.textAlign = 'center';
+    const googleSans = new FontFace(
+      'GoogleSans',
+      'url(assets/fonts/GoogleSans/GoogleSans-Medium.ttf)',
+    );
 
-    context.drawImage(templateImage, 0, 0);
-    context.fillText(record.name, this.NAME_LEFT, this.NAME_TOP);
-    // Uncomment in case we need to show the role in the credential
-    // context.strokeText(record.role, this.NAME_LEFT, this.NAME_TOP + 24);
-    context.strokeRect(0, 0, this.WIDTH, this.HEIGHT);
-    context.drawImage(qrImage, this.QR_LEFT, this.QR_TOP);
+    (document.fonts as any).add(googleSans);
+    googleSans.load();
 
-    this.credentialLoaded.emit();
+    document.fonts.ready.then(() => {
+      // Ready to use the font in a canvas context
+      context.font = '500 20px GoogleSans';
+      context.textAlign = 'center';
+      context.fillStyle =
+        record.role === RecordRole.Asistente ? 'white' : 'black';
+
+      context.drawImage(templateImage, 0, 0);
+      context.fillText(record.name, this.NAME_LEFT, this.NAME_TOP);
+      // Uncomment in case we need to show the role in the credential
+      // context.strokeText(record.role, this.NAME_LEFT, this.NAME_TOP + 24);
+      context.strokeRect(0, 0, this.WIDTH, this.HEIGHT);
+      context.drawImage(qrImage, this.QR_LEFT, this.QR_TOP);
+
+      this.credentialLoaded.emit();
+    });
   }
 }

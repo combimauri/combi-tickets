@@ -164,7 +164,7 @@ export class ScannerComponent {
   );
 
   registries$ = inject(RegistryService).getRegistries();
-  selectedRegistry: Registry | undefined;
+  selectedRegistry?: Registry;
   rfidNumber?: number;
 
   // checkedInRecords$ = inject(RecordService)

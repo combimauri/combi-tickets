@@ -32,9 +32,9 @@ import { Registry } from '../../core/models/registry.model';
   `,
 })
 export class ScannerRegistrySelectorComponent {
-  @Input() registries: Registry[] | null | undefined;
+  @Input() registries?: Registry[] | null;
 
   @Output() selectRegistry = new EventEmitter<Registry | undefined>();
 
-  selectedRegistry: Registry | undefined;
+  selectedRegistry?: Registry;
 }
