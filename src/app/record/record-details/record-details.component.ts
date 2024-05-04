@@ -118,9 +118,7 @@ export class RecordDetailsComponent {
   private recordService = inject(RecordService);
   private recordUpdateSubject$ = new Subject<Partial<CombiRecord>>();
   recordUpdate$ = this.recordUpdateSubject$.pipe(
-    switchMap((data) =>
-      this.recordService.updateRecord(this.record.email, data),
-    ),
+    switchMap((data) => this.recordService.updateRecord(this.record.id, data)),
     tap((data) => (this.record = { ...this.record, ...data })),
   );
 

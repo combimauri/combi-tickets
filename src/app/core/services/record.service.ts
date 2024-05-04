@@ -163,13 +163,13 @@ export class RecordService {
     );
   }
 
-  getRecordByEmail(email: string): Observable<CombiRecord | undefined> {
+  getRecordById(id: string): Observable<CombiRecord | undefined> {
     this.loadingState.startLoading();
 
     let docRef: DocumentReference<DocumentData>;
 
     try {
-      docRef = doc(this.db, this.COLLECTION_NAME, email);
+      docRef = doc(this.db, this.COLLECTION_NAME, id);
     } catch (error) {
       return this.handleErrorGettingRecord(error as string);
     }
@@ -183,7 +183,7 @@ export class RecordService {
   }
 
   updateRecord(
-    email: string,
+    id: string,
     data: Partial<CombiRecord>,
     displayToast = true,
   ): Observable<Partial<CombiRecord> | undefined> {
@@ -192,7 +192,7 @@ export class RecordService {
     let docRef: DocumentReference<DocumentData>;
 
     try {
-      docRef = doc(this.db, this.COLLECTION_NAME, email);
+      docRef = doc(this.db, this.COLLECTION_NAME, id);
     } catch (error) {
       return this.handleErrorGettingRecord(error as string);
     }
@@ -203,7 +203,7 @@ export class RecordService {
           this.logger.handleSuccess('Record updated successfully.');
         }
 
-        return { ...data, email };
+        return { ...data, id };
       }),
       catchError((error) => this.handleErrorGettingRecord(error)),
       tap(() => this.loadingState.stopLoading()),

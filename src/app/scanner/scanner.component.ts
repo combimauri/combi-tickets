@@ -107,7 +107,7 @@ export class ScannerComponent {
   private recordService = inject(RecordService);
   private recordSubject$ = new Subject<string>();
   record$ = this.recordSubject$.pipe(
-    switchMap((email) => this.recordService.getRecordByEmail(email)),
+    switchMap((id) => this.recordService.getRecordById(id)),
     switchMap((record) => {
       if (record && this.selectedRegistry) {
         console.log(record);
@@ -155,7 +155,7 @@ export class ScannerComponent {
           };
         }
 
-        return this.recordService.updateRecord(record.email, data);
+        return this.recordService.updateRecord(record.id, data);
       }
 
       return of(undefined);
@@ -193,7 +193,7 @@ export class ScannerComponent {
   //     ),
   //   );
 
-  private scannedEmail = '';
+  private scannedId = '';
   private dialog = inject(MatDialog);
   private destroyRef = inject(DestroyRef);
 
@@ -202,14 +202,14 @@ export class ScannerComponent {
     this.selectedRegistry = registry;
   }
 
-  processCode(scannedEmail: string): void {
-    if (!scannedEmail || this.scannedEmail) {
+  processCode(scannedId: string): void {
+    if (!scannedId || this.scannedId) {
       return;
     }
 
-    this.scannedEmail = scannedEmail;
+    this.scannedId = scannedId;
 
-    this.recordSubject$.next(this.scannedEmail);
+    this.recordSubject$.next(this.scannedId);
   }
 
   private openScannerDialog(
@@ -221,7 +221,7 @@ export class ScannerComponent {
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this.scannedEmail = '';
+        this.scannedId = '';
         this.rfidNumber = undefined;
       });
   }

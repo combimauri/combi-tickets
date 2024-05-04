@@ -5,6 +5,7 @@ export enum RecordRole {
 }
 
 export interface CombiRecord {
+  id: string;
   email: string;
   name: string;
   role: RecordRole;

@@ -93,7 +93,7 @@ export class CredentialComponent {
     }
 
     this.credentialCanvas?.nativeElement.toBlob((file: Blob) => {
-      const storageRef = ref(this.storage, `mt/${this._record?.email}`);
+      const storageRef = ref(this.storage, `mt/${this._record?.id}`);
 
       uploadBytes(storageRef, file).then(async (snapshot) => {
         const credentialUrl = await getDownloadURL(snapshot.ref);
@@ -104,7 +104,7 @@ export class CredentialComponent {
           return;
         }
 
-        this.recordService.updateRecord(this._record?.email, { credentialUrl });
+        this.recordService.updateRecord(this._record?.id, { credentialUrl });
       });
     });
   }
