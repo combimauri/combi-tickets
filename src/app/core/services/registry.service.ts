@@ -3,6 +3,7 @@ import {
   Firestore,
   collection,
   collectionData,
+  orderBy,
   query,
   where,
 } from '@angular/fire/firestore';
@@ -24,6 +25,7 @@ export class RegistryService {
     const dbQuery = query(
       collection(this.db, 'registries'),
       where('deleted', '==', false),
+      orderBy('order'),
     );
 
     return (collectionData(dbQuery) as Observable<Registry[]>).pipe(
