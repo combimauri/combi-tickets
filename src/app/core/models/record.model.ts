@@ -1,6 +1,6 @@
 export enum RecordRole {
   Asistente = 'ASISTENTE',
-  Mentor = 'MENTOR',
+  Speaker = 'SPEAKER',
   Staff = 'STAFF',
 }
 

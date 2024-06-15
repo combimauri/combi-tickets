@@ -37,7 +37,7 @@ import { RecordService } from 'src/app/core/services/record.service';
       hidden
       [margin]="0"
       [qrdata]="recordCode"
-      [width]="200"
+      [width]="QR_SIZE"
     ></qrcode>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,20 +54,21 @@ export class CredentialComponent {
   recordCode = '';
 
   readonly HEIGHT = 542;
-  readonly WIDTH = 400;
+  readonly WIDTH = 354;
+  readonly QR_SIZE = 200;
 
   private _record?: CombiRecord;
   private storage = inject(Storage);
   private recordService = inject(RecordService);
 
-  private readonly QR_TOP = 224;
-  private readonly QR_LEFT = 100;
-  private readonly NAME_TOP = 512;
+  private readonly QR_TOP = 180;
+  private readonly QR_LEFT = (this.WIDTH - this.QR_SIZE) / 2;
+  private readonly NAME_TOP = 170;
   private readonly NAME_LEFT = this.WIDTH / 2;
   private readonly TEMPLATES: Record<RecordRole, string> = {
-    [RecordRole.Asistente]: 'assets/img/participante-ia.png',
-    [RecordRole.Staff]: 'assets/img/staff-ia.png',
-    [RecordRole.Mentor]: 'assets/img/mentor-ia.png',
+    [RecordRole.Asistente]: 'assets/img/participante-io.png',
+    [RecordRole.Staff]: 'assets/img/staff-io.png',
+    [RecordRole.Speaker]: 'assets/img/speaker-io.png',
   };
 
   @ViewChild('qrCode', { static: true }) private qrCode?: QRCodeComponent;
@@ -158,10 +159,9 @@ export class CredentialComponent {
 
     document.fonts.ready.then(() => {
       // Ready to use the font in a canvas context
-      context.font = '500 20px GoogleSans';
+      context.font = '500 16px GoogleSans';
       context.textAlign = 'center';
-      context.fillStyle =
-        record.role === RecordRole.Asistente ? 'white' : 'black';
+      context.fillStyle = 'black';
 
       context.drawImage(templateImage, 0, 0);
       context.fillText(record.name, this.NAME_LEFT, this.NAME_TOP);
