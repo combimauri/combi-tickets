@@ -1,7 +1,9 @@
 export enum RecordRole {
-  Asistente = 'ASISTENTE',
-  Speaker = 'SPEAKER',
-  Staff = 'STAFF',
+  JAMMER = 'JAMMER',
+  KID = 'KID',
+  STAFF = 'STAFF',
+  GUIA = 'GUIA',
+  MENTOR = 'MENTOR',
 }
 
 export interface CombiRecord {

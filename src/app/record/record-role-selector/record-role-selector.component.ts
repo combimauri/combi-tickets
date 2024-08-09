@@ -25,7 +25,7 @@ import { RecordRole } from '../../core/models/record.model';
   `,
 })
 export class RecordRoleSelectorComponent {
-  readonly ROLES = [RecordRole.Asistente, RecordRole.Speaker, RecordRole.Staff];
+  readonly ROLES = [RecordRole.JAMMER, RecordRole.KID, RecordRole.STAFF];
 
   @Output() selectRole = new EventEmitter<RecordRole | string>();
 

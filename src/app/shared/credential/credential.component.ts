@@ -55,7 +55,7 @@ export class CredentialComponent {
 
   readonly HEIGHT = 542;
   readonly WIDTH = 354;
-  readonly QR_SIZE = 200;
+  readonly QR_SIZE = 180;
 
   private _record?: CombiRecord;
   private storage = inject(Storage);
@@ -63,12 +63,14 @@ export class CredentialComponent {
 
   private readonly QR_TOP = 180;
   private readonly QR_LEFT = (this.WIDTH - this.QR_SIZE) / 2;
-  private readonly NAME_TOP = 170;
+  private readonly NAME_TOP = 160;
   private readonly NAME_LEFT = this.WIDTH / 2;
   private readonly TEMPLATES: Record<RecordRole, string> = {
-    [RecordRole.Asistente]: 'assets/img/participante-io.png',
-    [RecordRole.Staff]: 'assets/img/staff-io.png',
-    [RecordRole.Speaker]: 'assets/img/speaker-io.png',
+    [RecordRole.JAMMER]: 'assets/img/wgj-jammer.png',
+    [RecordRole.STAFF]: 'assets/img/wgj-staff.png',
+    [RecordRole.KID]: 'assets/img/wgj-kid.png',
+    [RecordRole.GUIA]: 'assets/img/wgj-guia.png',
+    [RecordRole.MENTOR]: 'assets/img/wgj-mentor.png',
   };
 
   @ViewChild('qrCode', { static: true }) private qrCode?: QRCodeComponent;
@@ -118,7 +120,7 @@ export class CredentialComponent {
     this.recordCode = record['id'] as string;
     const templateImage = new Image();
     templateImage.src =
-      this.TEMPLATES[record.role] || this.TEMPLATES[RecordRole.Asistente];
+      this.TEMPLATES[record.role] || this.TEMPLATES[RecordRole.JAMMER];
     templateImage.onload = () =>
       this.loadCredentialImage(templateImage, record);
   }
