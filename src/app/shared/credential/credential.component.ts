@@ -61,17 +61,16 @@ export class CredentialComponent {
   private storage = inject(Storage);
   private recordService = inject(RecordService);
 
-  private readonly QR_TOP = 180;
+  private readonly QR_TOP = 190;
   private readonly QR_LEFT = (this.WIDTH - this.QR_SIZE) / 2;
-  private readonly NAME_TOP = 160;
+  private readonly NAME_TOP = 170;
   private readonly NAME_LEFT = this.WIDTH / 2;
   private readonly TEMPLATES: Record<RecordRole, string> = {
-    [RecordRole.JAMMER]: 'assets/img/wgj-jammer.png',
-    [RecordRole.STAFF]: 'assets/img/wgj-staff.png',
-    [RecordRole.KID]: 'assets/img/wgj-kid.png',
-    [RecordRole.GUIA]: 'assets/img/wgj-guia.png',
-    [RecordRole.MENTOR]: 'assets/img/wgj-mentor.png',
+    [RecordRole.ASISTENTE]: 'assets/img/participante-tj.png',
+    [RecordRole.STAFF]: 'assets/img/staff-tj.png',
+    [RecordRole.SPEAKER]: 'assets/img/speaker-tj.png',
   };
+  private readonly STORAGE_FOLDER = 'tech-join';
 
   @ViewChild('qrCode', { static: true }) private qrCode?: QRCodeComponent;
 
@@ -96,7 +95,10 @@ export class CredentialComponent {
     }
 
     this.credentialCanvas?.nativeElement.toBlob((file: Blob) => {
-      const storageRef = ref(this.storage, `mt/${this._record?.id}`);
+      const storageRef = ref(
+        this.storage,
+        `${this.STORAGE_FOLDER}/${this._record?.id}`,
+      );
 
       uploadBytes(storageRef, file).then(async (snapshot) => {
         const credentialUrl = await getDownloadURL(snapshot.ref);
@@ -120,7 +122,7 @@ export class CredentialComponent {
     this.recordCode = record['id'] as string;
     const templateImage = new Image();
     templateImage.src =
-      this.TEMPLATES[record.role] || this.TEMPLATES[RecordRole.JAMMER];
+      this.TEMPLATES[record.role] || this.TEMPLATES[RecordRole.ASISTENTE];
     templateImage.onload = () =>
       this.loadCredentialImage(templateImage, record);
   }
