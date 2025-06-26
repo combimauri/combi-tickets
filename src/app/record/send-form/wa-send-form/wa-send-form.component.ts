@@ -107,12 +107,12 @@ export class WASendFormComponent {
     }
 
     if (credentialUrl) {
-      this.message = `Hola ${this.record.name}, tu credencial para el evento "Tech Join 2024" es: ${credentialUrl} ¡Nos vemos ahí!`;
+      this.message = `Hola ${this.record.name}, tu credencial para el evento "Build with AI 2025" es: ${credentialUrl} ¡Nos vemos ahí!`;
       return;
     }
 
     if (this.record.credentialUrl) {
-      this.message = `Hola ${this.record.name}, tu credencial para el evento "Tech Join 2024" es: ${this.record.credentialUrl} ¡Nos vemos ahí!`;
+      this.message = `Hola ${this.record.name}, tu credencial para el evento "Build with AI 2025" es: ${this.record.credentialUrl} ¡Nos vemos ahí!`;
     } else {
       this.credential?.saveInStorage();
     }

@@ -71,7 +71,7 @@ export class CredentialComponent {
     [RecordRole.MENTOR]: 'assets/img/MENTOR-ai-25.png',
     [RecordRole.JURADO]: 'assets/img/JURADO-ai-25.png',
   };
-  private readonly STORAGE_FOLDER = 'tech-join';
+  private readonly STORAGE_FOLDER = 'ai-25';
 
   @ViewChild('qrCode', { static: true }) private qrCode?: QRCodeComponent;
 
