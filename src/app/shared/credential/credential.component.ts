@@ -61,14 +61,15 @@ export class CredentialComponent {
   private storage = inject(Storage);
   private recordService = inject(RecordService);
 
-  private readonly QR_TOP = 190;
+  private readonly QR_TOP = 220;
   private readonly QR_LEFT = (this.WIDTH - this.QR_SIZE) / 2;
-  private readonly NAME_TOP = 170;
+  private readonly NAME_TOP = 200;
   private readonly NAME_LEFT = this.WIDTH / 2;
   private readonly TEMPLATES: Record<RecordRole, string> = {
-    [RecordRole.ASISTENTE]: 'assets/img/participante-tj.png',
-    [RecordRole.STAFF]: 'assets/img/staff-tj.png',
-    [RecordRole.SPEAKER]: 'assets/img/speaker-tj.png',
+    [RecordRole.PARTICIPANTE]: 'assets/img/PARTICIPANTE-ai-25.png',
+    [RecordRole.STAFF]: 'assets/img/STAFF-ai-25.png',
+    [RecordRole.MENTOR]: 'assets/img/MENTOR-ai-25.png',
+    [RecordRole.JURADO]: 'assets/img/JURADO-ai-25.png',
   };
   private readonly STORAGE_FOLDER = 'tech-join';
 
@@ -122,7 +123,7 @@ export class CredentialComponent {
     this.recordCode = record['id'] as string;
     const templateImage = new Image();
     templateImage.src =
-      this.TEMPLATES[record.role] || this.TEMPLATES[RecordRole.ASISTENTE];
+      this.TEMPLATES[record.role] || this.TEMPLATES[RecordRole.PARTICIPANTE];
     templateImage.onload = () =>
       this.loadCredentialImage(templateImage, record);
   }

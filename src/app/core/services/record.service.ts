@@ -41,7 +41,7 @@ export class RecordService {
   private db = inject(Firestore);
   private logger = inject(LoggerService);
 
-  private readonly COLLECTION_NAME = 'records-tj-2024';
+  private readonly COLLECTION_NAME = 'records-ai-2025';
 
   getAllRecords(
     roleFilter: RecordRole | string,
